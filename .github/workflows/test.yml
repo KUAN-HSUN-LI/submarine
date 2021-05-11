@@ -23,6 +23,10 @@ jobs:
     - name: SETUP
       run: |
         sudo service mysql start
-        mysql -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
+        mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
       env:
         DB_PORT: 3306
+    - name: The job has failed
+      if: ${{ failure() }}
+      run: |
+        systemctl status mysql.service
