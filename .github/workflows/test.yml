@@ -13,7 +13,6 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
           - 3306:3306
@@ -25,7 +24,5 @@ jobs:
       run: |
         sudo service mysql start
         mysql -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
-        mysql -e "CREATE USER IF NOT EXISTS 'submarine_test'@'%' IDENTIFIED BY 'password_test';"
-        mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'submarine_test'@'%';"
       env:
         DB_PORT: 3306
