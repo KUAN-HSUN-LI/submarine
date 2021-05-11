@@ -23,5 +23,6 @@ jobs:
     - name: SETUP
       run: |
         sudo service mysql start
+        ./dev-support/database/init-database.sh
       env:
         DB_PORT: 3306
