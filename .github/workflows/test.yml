@@ -22,7 +22,5 @@ jobs:
     - name: SETUP
       run: |
         sudo service mysql start
-        ./dev-support/database/init-database.sh
-        ./dev-support/travis/install_external_dependencies.sh
       env:
         DB_PORT: 3306
