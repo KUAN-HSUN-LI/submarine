@@ -10,12 +10,17 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: db
+          MYSQL_DATABASE: test_db
+          MYSQL_USER: user
+          MYSQL_PASSWORD: secret
+          MYSQL_ROOT_PASSWORD: secretroot
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - name: Verify MySQL connection from host
-        run: mysql --port 3306 -uroot -ppassword -e "SHOW DATABASES"
+          run: |
+          mysql --version
+          sudo apt-get install -y mysql-client
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uuser -psecret -e "SHOW DATABASES"
 #         sudo mysql --port 8888 -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
 #     - name: mysql-data
 #       run: sudo ./dev-support/database/init-database.sh
