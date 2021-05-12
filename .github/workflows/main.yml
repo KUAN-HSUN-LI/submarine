@@ -7,8 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Shutdown Ubuntu MySQL (SUDO)
-      run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
+#     - name: Shutdown Ubuntu MySQL (SUDO)
+#       run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
 #     - name: Set up MySQL
 #       uses: mirromutth/mysql-action@v1.1
 #       with:
