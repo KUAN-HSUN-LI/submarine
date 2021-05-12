@@ -6,19 +6,10 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_USER: root
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10
     steps:
       - uses: actions/checkout@v2
       - name: mysql-start
-        run: sudo /etc/init.d/mysql start
+        run: sudo service mysql restart
       - name: mysql-status1
         run: sudo service mysql status
 #       - name: Shutdown Ubuntu MySQL (SUDO)
