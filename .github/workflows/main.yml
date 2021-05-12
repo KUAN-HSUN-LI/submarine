@@ -10,7 +10,7 @@ jobs:
       - name: Verify MySQL connection from host
         run: |
           mysql --version
-          sudo service mysql start
+          sudo service mysql restart
           mysql -uroot -proot -e "SHOW DATABASES"
           mysql -uroot -proot -e "SHOW VARIABLES"
           cat /etc/mysql/my.cnf
