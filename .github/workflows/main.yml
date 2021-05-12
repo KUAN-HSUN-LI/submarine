@@ -21,11 +21,9 @@ jobs:
       run:
         sudo service mysql status
 # #         sudo mysqladmin -u root -p root password
-#     - name: mysql-test
-#       run: |
-#         sudo su
-#         mysql -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
-#         exit
+    - name: mysql-test
+      run:
+        sudo mysql -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
 #     - name: mysql-data
 #       run: sudo ./dev-support/database/init-database.sh
 #       - name: Shutdown Ubuntu MySQL (SUDO)
