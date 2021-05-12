@@ -18,8 +18,11 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
-      - name: mysql-setup
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
+      - name: mysql-start
         run: |
           sudo service mysql start
-          sudo service mysql status
-          echo "mysql restart"
+          
+      - name: mysql-status
+        run: sudo service mysql status
