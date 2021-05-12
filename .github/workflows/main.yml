@@ -25,7 +25,7 @@ jobs:
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '5.7'
-      - run: mysql -uroot -h127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS submarine_test;'
+      - run: sudo mysql -e 'CREATE DATABASE IF NOT EXISTS submarine_test;'
 #       - name: mysql-status2
 #         run: sudo service mysql status
 #       - name: mysql-start
