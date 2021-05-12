@@ -13,7 +13,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
-          - "3306:3306"
+          - "8888:3306"
     steps:
     - name: mysql-start
       run: sudo service mysql restart
@@ -23,7 +23,7 @@ jobs:
 # #         sudo mysqladmin -u root -p root password
     - name: mysql-test
       run:
-        sudo mysql -uroot -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
+        sudo mysql --port 8888 -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
 #     - name: mysql-data
 #       run: sudo ./dev-support/database/init-database.sh
 #       - name: Shutdown Ubuntu MySQL (SUDO)
