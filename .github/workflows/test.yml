@@ -22,9 +22,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: SETUP
       run: |
-        sudo /etc/init.d/mysql start
-        sudo service mysql restart
-        mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
+        sudo mysql -u root -p
       env:
         DB_PORT: 3306
     - name: The job has failed
