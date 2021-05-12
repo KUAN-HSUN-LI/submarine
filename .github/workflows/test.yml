@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: SETUP
       run: |
-        sudo services mysql start
+        sudo service mysql start
         sudo mysql -u root
         exit
       env:
