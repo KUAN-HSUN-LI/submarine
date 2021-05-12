@@ -12,6 +12,8 @@ jobs:
         run: sudo service mysql restart
       - name: mysql-status1
         run: sudo service mysql status
+      - name: mysql-data
+        run: ./dev-support/database/init-database.sh
 #       - name: Shutdown Ubuntu MySQL (SUDO)
 #         run: sudo service mysql stop
 #       - name: mysql-status2
