@@ -6,12 +6,18 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+        - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
     steps:
-#     - name: mysql-start
-#       run: sudo service mysql start
-#     - name: mysql-status1
-#       run:
-#         sudo service mysql status
+    - name: mysql-start
+      run: sudo service mysql restart
+    - name: mysql-status1
+      run:
+        sudo service mysql status
 # #         sudo mysqladmin -u root -p root password
 #     - name: mysql-test
 #       run: |
@@ -20,12 +26,8 @@ jobs:
 #         exit
 #     - name: mysql-data
 #       run: sudo ./dev-support/database/init-database.sh
-      - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop
-      - uses: shogo82148/actions-setup-mysql@v1
-        with:
-          mysql-version: '5.7'
-      - run: mysql -e 'CREATE DATABASE IF NOT EXISTS submarine_test;'
+#       - name: Shutdown Ubuntu MySQL (SUDO)
+#         run: sudo service mysql stop
 #       - name: mysql-status2
 #         run: sudo service mysql status
 #       - name: mysql-start
