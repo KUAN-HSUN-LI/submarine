@@ -7,13 +7,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: mysql-start
-        run: sudo service mysql restart
-      - name: mysql-status1
-        run: sudo service mysql status
-      - name: mysql-data
-        run: ./dev-support/database/init-database.sh
+    - name: Shutdown Ubuntu MySQL (SUDO)
+      run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
+    - name: Set up MySQL
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        mysql version: '5.7'
+    - uses: actions/checkout@v2
+#     - name: mysql-start
+#       run: sudo service mysql restart
+    - name: mysql-status1
+      run: sudo service mysql status
+    - name: mysql-data
+      run: ./dev-support/database/init-database.sh
 #       - name: Shutdown Ubuntu MySQL (SUDO)
 #         run: sudo service mysql stop
 #       - name: mysql-status2
