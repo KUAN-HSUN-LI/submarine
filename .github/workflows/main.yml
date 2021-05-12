@@ -20,6 +20,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: mysql-setup
         run: |
+          sudo service mysql start
           sudo service mysql status
-          sudo service mysql restart
           echo "mysql restart"
