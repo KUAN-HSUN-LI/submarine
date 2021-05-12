@@ -15,7 +15,7 @@ jobs:
 #         sudo mysqladmin -u root -p root password
     - name: mysql-test
       run:
-        sudo mysql -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
+        sudo mysql -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
     - name: mysql-data
       run: sudo ./dev-support/database/init-database.sh
 #       - name: Shutdown Ubuntu MySQL (SUDO)
