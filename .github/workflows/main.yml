@@ -8,25 +8,31 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         env:
+#           MYSQL_ALLOW_EMPTY_PASSWORD: yes
+#         ports:
+#           - 3306:3306
+#         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
-      - name: mysql-status1
-        run: sudo service mysql status
-      - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop
-      - name: mysql-status2
-        run: sudo service mysql status
-      - name: mysql-start
+      - uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: '5.7'
+      - name: test select
         run: |
-          sudo service mysql start
+          mysql -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
+#       - name: mysql-status1
+#         run: sudo service mysql status
+#       - name: Shutdown Ubuntu MySQL (SUDO)
+#         run: sudo service mysql stop
+#       - name: mysql-status2
+#         run: sudo service mysql status
+#       - name: mysql-start
+#         run: |
+#           sudo service mysql start
           
-      - name: mysql-status3
-        run: sudo service mysql status
+#       - name: mysql-status3
+#         run: sudo service mysql status
