@@ -15,8 +15,8 @@ jobs:
 #         mysql version: '5.7'
 #         mysql user: 'root'
 #     - uses: actions/checkout@v2
-#     - name: mysql-start
-#       run: sudo service mysql restart
+    - name: mysql-start
+      run: sudo service mysql start
     - name: mysql-status1
       run: |
         sudo service mysql status
