@@ -22,7 +22,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: SETUP
       run: |
-        sudo mysql -u root -p
+        sudo mysql -u root
+        exit
       env:
         DB_PORT: 3306
     - name: The job has failed
