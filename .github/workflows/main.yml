@@ -12,6 +12,7 @@ jobs:
           mysql --version
           sudo service mysql start
           mysql -uroot -proot -e "SHOW DATABASES"
+          cat ~/.my.cnf
 #         sudo mysql --port 8888 -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
 #     - name: mysql-data
 #       run: sudo ./dev-support/database/init-database.sh
