@@ -7,26 +7,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify MySQL connection from host
-        run: |
-          mysql --version
-          sudo service mysql restart
-          mysql -uroot -proot -e "SHOW GRANTS;"
-          mysql -uroot -proot -e "CREATE USER '$(whoami)'@'localhost';"
-          mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO '$(whoami)'@'localhost';"
-          mysql -uroot -proot -e "SHOW GRANTS;"
-          mysql -e "SHOW DATABASES"
-          mysql -e "SHOW VARIABLES"
-#         sudo mysql --port 8888 -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
-#     - name: mysql-data
-#       run: sudo ./dev-support/database/init-database.sh
-#       - name: Shutdown Ubuntu MySQL (SUDO)
-#         run: sudo service mysql stop
-#       - name: mysql-status2
-#         run: sudo service mysql status
-#       - name: mysql-start
-#         run: |
-#           sudo service mysql start
-          
-#       - name: mysql-status3
-#         run: sudo service mysql status
+    - name: Create default user
+      run: |
+        mysql --version
+        sudo service mysql restart
+        mysql -uroot -proot -e "CREATE USER '$(whoami)'@'localhost';"
+        mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO '$(whoami)'@'localhost';"
+    - name: mysql-data
+      run: | 
+        ./dev-support/database/init-database.sh
+        ./dev-support/travis/install_external_dependencies.sh
