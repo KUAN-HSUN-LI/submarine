@@ -10,7 +10,7 @@ jobs:
       - name: Verify MySQL connection from host
         run: |
           mysql --version
-          sudo apt-get install -y mysql-client
+          sudo service mysql start
           mysql -uroot -proot -e "SHOW DATABASES"
 #         sudo mysql --port 8888 -e "CREATE DATABASE IF NOT EXISTS submarine_test;"
 #     - name: mysql-data
