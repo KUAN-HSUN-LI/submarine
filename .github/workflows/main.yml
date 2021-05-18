@@ -21,51 +21,40 @@ env:
   MOZ_HEADLESS: 1
 
 jobs:
-  build-database:
+  test-e2e:
     name: Build Mysql Database
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Create default user
-      run: |
-        mysql --version
-        sudo service mysql restart
-        mysql -uroot -proot -e "CREATE USER '$(whoami)'@'localhost';"
-        mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO '$(whoami)'@'localhost';"
-    - name: mysql-data
-      run: | 
-        ./dev-support/database/init-database.sh
-        ./dev-support/travis/install_external_dependencies.sh
-  setup-protobuf:
-    name: Setup protobuf
-    runs-on: ubuntu-latest
-    env:
-      PROTOBUF_VERSION: "3.10.1"
-      PROTOC_FILENAME: "protoc-3.10.1-linux-x86_64.zip"
-    steps:
-    - run: |
-        echo $PROTOBUF_VERSION $PROTOC_FILENAME
-        pushd /home/runner
-        wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
-        unzip ${PROTOC_FILENAME}
-        bin/protoc --version
-        popd
-  build-submarine:
-    name: Build Submarine
-    needs: [build-database, setup-protobuf]
-    runs-on: ubuntu-latest
-    env:
-      PROFILE: "-Phadoop-2.9"
-      BUILD_FLAG: "clean package install -DskipTests"
-      TEST_FLAG: "verify -DskipRat -am"
-      TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
-      TEST_PROJECTS: ""
+    services:
+      mysql:
+        image: apache/submarine:database-0.6.0-SNAPSHOT
+        env:
+            MYSQL_ROOT_PASSWORD: 'password'
+        ports: 
+        - 3306:3306
     steps:
       - uses: actions/checkout@v2
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - name: Setup protobuf
+        env:
+          PROTOBUF_VERSION: "3.10.1"
+          PROTOC_FILENAME: "protoc-3.10.1-linux-x86_64.zip"
+        run: |
+          echo $PROTOBUF_VERSION $PROTOC_FILENAME
+          pushd /home/runner
+          wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
+          unzip ${PROTOC_FILENAME}
+          bin/protoc --version
+          popd 
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
-          java-version: '1.8'
+          java-version: "1.8"
       - name: Set up Maven 3.6.3
         uses: stCarolas/setup-maven@v4
         with:
@@ -98,29 +87,28 @@ jobs:
           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-io-
-      - name: Build with Maven
+      - name: Build Submarine
         env:
+          PROFILE: "-Phadoop-2.9"
+          BUILD_FLAG: "clean package install -DskipTests"
           BUILD_FLAG: "clean package install -DskipTests"
           MODULES: ""
-          PROFILE: "-Phadoop-2.9"
         run: |
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
-        #  export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-        #  mvn --no-transfer-progress -DskipTests install
-    
+
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
-      - name: tree
+      - name: test e2e
+        env:
+          PROFILE: "-Phadoop-2.9"
+          BUILD_FLAG: "clean package install -DskipTests"
+          TEST_FLAG: "verify -DskipRat -am"
+          TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+          TEST_PROJECTS: ""
         run: |
-          sudo apt-get install tree
-          tree /home/runner/work/submarine/submarine/submarine-dist/
-      - name: verify
-        run: | 
           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
           -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
-      - name: test
-        run: mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
