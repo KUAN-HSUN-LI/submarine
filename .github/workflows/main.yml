@@ -52,6 +52,7 @@ jobs:
         popd
   build-submarine:
     name: Build Submarine
+    needs: [build-database, setup-protobuf]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
