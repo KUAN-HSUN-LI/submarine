@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: apache/submarine:database-0.6.0-SNAPSHOT
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: "password"
         ports:
