@@ -31,6 +31,7 @@ jobs:
             MYSQL_ROOT_PASSWORD: 'password'
         ports: 
         - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
       - uses: actions/checkout@v2
       - name: Shutdown Ubuntu MySQL (SUDO)

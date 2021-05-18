@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mysql
+import mysql.connector
 
 conn = mysql.connector.connect(
    user='root', password='password', host='127.0.0.1')
@@ -50,7 +50,7 @@ commit("CREATE DATABASE IF NOT EXISTS submarine_test;")
 commit("CREATE USER IF NOT EXISTS 'submarine_test'@'%' IDENTIFIED BY 'password_test';")
 commit("GRANT ALL PRIVILEGES ON *.* TO 'submarine_test'@'%';")
 commit("use submarine_test;")
-commit_from_file("./submarine.sql")
+commit_from_file("./dev-support/database/submarine.sql")
 commit("show tables;")
 
 
@@ -58,7 +58,7 @@ commit("CREATE DATABASE IF NOT EXISTS metastore_test;")
 commit("CREATE USER IF NOT EXISTS 'metastore_test'@'%' IDENTIFIED BY 'password_test';")
 commit("GRANT ALL PRIVILEGES ON *.* TO 'metastore_test'@'%';")
 commit("use metastore_test;")
-commit_from_file("./metastore.sql")
+commit_from_file("./dev-support/database/metastore.sql")
 commit("show tables;")
 
 
@@ -66,8 +66,8 @@ commit("CREATE DATABASE IF NOT EXISTS submarine;")
 commit("CREATE USER IF NOT EXISTS 'submarine'@'%' IDENTIFIED BY 'password';")
 commit("GRANT ALL PRIVILEGES ON *.* TO 'submarine'@'%';")
 commit("use submarine;")
-commit_from_file("./submarine.sql")
-commit_from_file("./submarine-data.sql")
+commit_from_file("./dev-support/database/submarine.sql")
+commit_from_file("./dev-support/database/submarine-data.sql")
 commit("show tables;")
 
 
@@ -75,6 +75,6 @@ commit("CREATE DATABASE IF NOT EXISTS metastore;")
 commit("CREATE USER IF NOT EXISTS 'metastore'@'%' IDENTIFIED BY 'password';")
 commit("GRANT ALL PRIVILEGES ON *.* TO 'metastore'@'%';")
 commit("use metastore;")
-commit_from_file("./metastore.sql")
+commit_from_file("./dev-support/database/metastore.sql")
 commit("show tables;")
 
