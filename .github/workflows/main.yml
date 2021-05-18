@@ -55,7 +55,6 @@ jobs:
     needs: [build-database, setup-protobuf]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -113,7 +112,6 @@ jobs:
       TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
       TEST_PROJECTS: ""
     steps:
-      - uses: actions/checkout@v2
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
       - name: tree
