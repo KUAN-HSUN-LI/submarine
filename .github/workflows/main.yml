@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PROTOBUF_VERSION: "3.10.1"
-      PROTOC_FILENAME: "protoc-${PROTOBUF_VERSION}-linux-x86_64.zip"
+      PROTOC_FILENAME: "protoc-${{env.PROTOBUF_VERSION}}-linux-x86_64.zip"
     steps:
     - run: |
         echo $PROTOBUF_VERSION $PROTOC_FILENAME
