@@ -39,10 +39,11 @@ jobs:
   setup-protobuf:
     name: Setup protobuf
     runs-on: ubuntu-latest
+    env:
+      PROTOBUF_VERSION: "3.10.1"
+      PROTOC_FILENAME: "protoc-3.10.1-linux-x86_64.zip"
     steps:
     - run: |
-        PROTOBUF_VERSION = "3.10.1"
-        PROTOC_FILENAME = "protoc-${{env.PROTOBUF_VERSION}}-linux-x86_64.zip"
         echo $PROTOBUF_VERSION $PROTOC_FILENAME
         pushd /home/runner
         wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
