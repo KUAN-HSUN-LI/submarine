@@ -54,6 +54,12 @@ jobs:
     name: Build Submarine
     needs: [build-database, setup-protobuf]
     runs-on: ubuntu-latest
+    env:
+      PROFILE: "-Phadoop-2.9"
+      BUILD_FLAG: "clean package install -DskipTests"
+      TEST_FLAG: "verify -DskipRat -am"
+      TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+      TEST_PROJECTS: ""
     steps:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
@@ -101,17 +107,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
         #  export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
         #  mvn --no-transfer-progress -DskipTests install
-  test-e2e:
-    name: Test E2E
-    needs: [build-database, setup-protobuf, build-submarine]
-    runs-on: ubuntu-latest
-    env:
-      PROFILE: "-Phadoop-2.9"
-      BUILD_FLAG: "clean package install -DskipTests"
-      TEST_FLAG: "verify -DskipRat -am"
-      TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
-      TEST_PROJECTS: ""
-    steps:
+    
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
       - name: tree
