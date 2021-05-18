@@ -36,12 +36,20 @@ jobs:
       run: | 
         ./dev-support/database/init-database.sh
         ./dev-support/travis/install_external_dependencies.sh
-#   build-protobuf:
-#     name: Build protobuf
-#     runs-on: ubuntu-latest
-#     env:
-#       PROTOBUF_VERSION: "3.10.1"
-#       PROTOC_FILENAME: "protoc-${PROTOBUF_VERSION}-linux-x86_64.zip"
+  setup-protobuf:
+    name: Setup protobuf
+    runs-on: ubuntu-latest
+    env:
+      PROTOBUF_VERSION: "3.10.1"
+      PROTOC_FILENAME: "protoc-${PROTOBUF_VERSION}-linux-x86_64.zip"
+    steps:
+    - run: |
+        echo $PROTOBUF_VERSION $PROTOC_FILENAME
+        pushd /home/travis
+        wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
+        unzip ${PROTOC_FILENAME}
+        bin/protoc --version
+        popd
   build-submarine:
     name: Build Submarine
     runs-on: ubuntu-latest
@@ -95,7 +103,7 @@ jobs:
         #  mvn --no-transfer-progress -DskipTests install
   test-e2e:
     name: Test E2E
-    needs: [build-database, build-submarine]
+    needs: [build-database, setup-protobuf, build-submarine]
     runs-on: ubuntu-latest
     env:
       PROFILE: "-Phadoop-2.9"
