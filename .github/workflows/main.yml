@@ -77,7 +77,9 @@ jobs:
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
       - name: verify
-        run: echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS" \
-                   >>> mvn verify -DskipRat -am -pl org.apache.submarine:submarine-test-e2e -Phadoop-2.9 -B 
+        run: | 
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
       - name: test
         run: mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
