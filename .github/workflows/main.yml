@@ -115,6 +115,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
+      - name: tree
+        run: |
+          sudo apt-get install tree
+          tree /home/runner/work/submarine/submarine/submarine-dist/
       - name: verify
         run: | 
           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
