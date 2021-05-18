@@ -36,6 +36,12 @@ jobs:
       run: | 
         ./dev-support/database/init-database.sh
         ./dev-support/travis/install_external_dependencies.sh
+#   build-protobuf:
+#     name: Build protobuf
+#     runs-on: ubuntu-latest
+#     env:
+#       PROTOBUF_VERSION: "3.10.1"
+#       PROTOC_FILENAME: "protoc-${PROTOBUF_VERSION}-linux-x86_64.zip"
   build-submarine:
     name: Build Submarine
     runs-on: ubuntu-latest
@@ -78,9 +84,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-io-
       - name: Build with Maven
+        env:
+          BUILD_FLAG: "clean package install -DskipTests"
+          MODULES: ""
+          PROFILE: "-Phadoop-2.9"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-          mvn --no-transfer-progress -DskipTests install
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+        #  export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+        #  mvn --no-transfer-progress -DskipTests install
   test-e2e:
     name: Test E2E
     needs: [build-database, build-submarine]
@@ -97,6 +109,8 @@ jobs:
       - run: chrome --version
       - name: verify
         run: | 
+          if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
+          -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
