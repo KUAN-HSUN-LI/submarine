@@ -1,7 +1,24 @@
 name: E2E
 
 # Controls when the action will run.
-on: [push, pull_request]
+on: [push]
+
+env:
+  SUBMARINE: "org.apache.submarine"
+  EXCLUDE_SUBMARINE: "!:submarine-all,!:submarine-client,!:submarine-dist"
+  EXCLUDE_SERVER: "!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc"
+  EXCLUDE_CLIENT: "!:submarine-client"
+  EXCLUDE_ALL: "!:submarine-all"
+  EXCLUDE_WORKBENCH: "!:submarine-workbench,!:submarine-workbench-web"
+  EXCLUDE_SUBMITTER_K8S: "!:submarine-submitter-k8s"
+  EXCLUDE_SUBMITTER_YARN: "!:submarine-submitter-yarn"
+  EXCLUDE_SUBMITTER: "!:submarine-server-submitter,${EXCLUDE_SUBMITTER_K8S},${EXCLUDE_SUBMITTER_YARN}"
+  EXCLUDE_COMMONS: "!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils"
+  EXCLUDE_CLOUD: "!:submarine-cloud"
+  EXCLUDE_DIST: "!:submarine-dist"
+  EXCLUDE_TEST: "!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+  EXCLUDE_SPARK_SECURTITY: "!:submarine-spark-security"
+  MOZ_HEADLESS: 1
 
 jobs:
   build-database:
