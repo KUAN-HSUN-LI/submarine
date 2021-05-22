@@ -34,8 +34,8 @@ jobs:
         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
       - uses: actions/checkout@v2
-      - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop
+#       - name: Shutdown Ubuntu MySQL (SUDO)
+#         run: sudo service mysql stop
       - name: Prepate default mysql-data
         run: |
           python3 -V
@@ -64,30 +64,30 @@ jobs:
         run: |
           mvn --version
           java -version
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-com-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-org-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-net-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-io-
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/com1
+#           key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-com-
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/org
+#           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-org-
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/net
+#           key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-net-
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/io
+#           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-io-
       - name: Build Submarine
         env:
           PROFILE: "-Phadoop-2.9"
