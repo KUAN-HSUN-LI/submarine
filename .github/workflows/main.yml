@@ -24,9 +24,10 @@ jobs:
   dump-github:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: echo "$GITHUB_CONTEXT"
   # test-e2e:
   #   name: Test E2E
   #   runs-on: ubuntu-latest
