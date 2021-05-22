@@ -12,7 +12,7 @@ env:
   EXCLUDE_WORKBENCH: "!:submarine-workbench,!:submarine-workbench-web"
   EXCLUDE_SUBMITTER_K8S: "!:submarine-submitter-k8s"
   EXCLUDE_SUBMITTER_YARN: "!:submarine-submitter-yarn"
-  EXCLUDE_SUBMITTER: "!:submarine-server-submitter,${EXCLUDE_SUBMITTER_K8S},${EXCLUDE_SUBMITTER_YARN}"
+  EXCLUDE_SUBMITTER: "!:submarine-server-submitter,${env.EXCLUDE_SUBMITTER_K8S},${env.EXCLUDE_SUBMITTER_YARN}"
   EXCLUDE_COMMONS: "!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils"
   EXCLUDE_CLOUD: "!:submarine-cloud"
   EXCLUDE_DIST: "!:submarine-dist"
