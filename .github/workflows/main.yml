@@ -36,8 +36,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 50
-#       - name: Shutdown Ubuntu MySQL (SUDO)
-#         run: sudo service mysql stop
       - name: Prepate default mysql-data
         run: |
           python3 -V
@@ -58,40 +56,40 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: "1.8"
-      - name: Set up Maven 3.6.3
-        uses: stCarolas/setup-maven@v4
-        with:
-          maven-version: 3.6.3
+#       - name: Set up Maven 3.6.3
+#         uses: stCarolas/setup-maven@v4
+#         with:
+#           maven-version: 3.6.3
+      - uses: browser-actions/setup-chrome@latest
       - name: Check version
         run: |
           mvn --version
           java -version
-          java -Xmx32m -version
-          javac -J-Xmx32m -version
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-com-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-org-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-net-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-io-
+          chrome --version
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/com1
+#           key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-com-
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/org
+#           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-org-
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/net
+#           key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-net-
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository/io
+#           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-io-
       - name: Build Submarine
         env:
           PROFILE: "-Phadoop-2.9"
@@ -101,8 +99,7 @@ jobs:
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
 
-      - uses: browser-actions/setup-chrome@latest
-      - run: chrome --version
+      
       - name: test e2e
         env:
           PROFILE: "-Phadoop-2.9"
