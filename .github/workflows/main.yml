@@ -21,136 +21,143 @@ env:
   MOZ_HEADLESS: 1
 
 jobs:
-  submarine-build:
-    name: Submarine Build
+  dump-github:
     runs-on: ubuntu-latest
-#     services:
-#       mysql:
-#         image: mysql:5.7
-#         env:
-#           MYSQL_ROOT_PASSWORD: "password"
-#         ports:
-#           - 3306:3306
-#         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 50
-      - name: Set up Protobuf 3.10.1
-        uses: arduino/setup-protoc@v1
-        with:
-          version: '3.10.1'
-#       - name: Set up Chrome latest
-#         uses: browser-actions/setup-chrome@latest
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: "1.8"
-      - name: Set up Maven 3.6.3
-        uses: stCarolas/setup-maven@v4
-        with:
-          maven-version: 3.6.3
-      - name: Check version
-        run: |
-          mvn --version
-          java -version
-#          chrome --version
-#       - name: Prepate default mysql-data
-#         run: |
-#           python3 -V
-#           pip install mysql-connector-python
-#           python3 ./dev-support/database/init-database.py
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-com-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-org-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-net-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-io-
-      - name: Build Submarine
+      - name: Dump GitHub context
         env:
-          PROFILE: "-Phadoop-2.9"
-          BUILD_FLAG: "clean package install -DskipTests"
-          MODULES: ""
-        run: |
-          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-          mvn --no-transfer-progress $BUILD_FLAG $MODULES $PROFILE -B
-      - name: Upload Submarine dist
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: |
-            submarine-dist
-#            ~/.m2
-#       - name: test e2e
-#         env:
-#           PROFILE: "-Phadoop-2.9"
-#           BUILD_FLAG: "clean package install -DskipTests"
-#           TEST_FLAG: "verify -DskipRat -am"
-#           TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
-#           TEST_PROJECTS: ""
-#         run: |
-#           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
-#           -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
-#           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
-#           echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
-#           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
-  test-e2e:
-    name: Test E2E
-    runs-on: ubuntu-latest
-    needs: [submarine-build]
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: "password"
-        ports:
-          - 3306:3306
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 50
-      - name: Set up Chrome latest
-        uses: browser-actions/setup-chrome@latest
-      - name: Prepate default mysql-data
-        run: |
-          python3 -V
-          pip install mysql-connector-python
-          python3 ./dev-support/database/init-database.py
-      - name: PWD
-        run: pwd
-      - uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: .
-      - name: test e2e
-        env:
-          PROFILE: "-Phadoop-2.9"
-          BUILD_FLAG: "clean package install -DskipTests"
-          TEST_FLAG: "verify -DskipRat -am"
-          TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
-          TEST_PROJECTS: ""
-        run: |
-          if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
-          -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
-          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
-          echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
-          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+  # test-e2e:
+  #   name: Test E2E
+  #   runs-on: ubuntu-latest
+  #   services:
+  #     mysql:
+  #       image: mysql:5.7
+  #       env:
+  #         MYSQL_ROOT_PASSWORD: "password"
+  #       ports:
+  #         - 3306:3306
+  #       options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 50
+  #     - name: Set up Protobuf 3.10.1
+  #       uses: arduino/setup-protoc@v1
+  #       with:
+  #         version: "3.10.1"
+  #     - name: Set up Chrome latest
+  #       uses: browser-actions/setup-chrome@latest
+  #     - name: Set up JDK 1.8
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: "1.8"
+  #     - name: Set up Maven 3.6.3
+  #       uses: stCarolas/setup-maven@v4
+  #       with:
+  #         maven-version: 3.6.3
+  #     - name: Check version
+  #       run: |
+  #         mvn --version
+  #         java -version
+  #         chrome --version
+  #     - name: Prepate default mysql-data
+  #       run: |
+  #         python3 -V
+  #         pip install mysql-connector-python
+  #         python3 ./dev-support/database/init-database.py
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/com1
+  #         key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-com-
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/org
+  #         key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-org-
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/net
+  #         key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-net-
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/io
+  #         key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-io-
+  #     - name: Build Submarine
+  #       env:
+  #         PROFILE: "-Phadoop-2.9"
+  #         BUILD_FLAG: "clean package install -DskipTests"
+  #         MODULES: ""
+  #       run: |
+  #         echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+  #         mvn --no-transfer-progress $BUILD_FLAG $MODULES $PROFILE -B
+  #     - name: Upload Submarine dist
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: |
+  #           submarine-dist
+  #            ~/.m2
+  #       - name: test e2e
+  #         env:
+  #           PROFILE: "-Phadoop-2.9"
+  #           BUILD_FLAG: "clean package install -DskipTests"
+  #           TEST_FLAG: "verify -DskipRat -am"
+  #           TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+  #           TEST_PROJECTS: ""
+  #         run: |
+  #           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
+  #           -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
+  #           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+  #           echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
+  #           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+  # test-e2e:
+  #   name: Test E2E
+  #   runs-on: ubuntu-latest
+  #   needs: [submarine-build]
+  #   services:
+  #     mysql:
+  #       image: mysql:5.7
+  #       env:
+  #         MYSQL_ROOT_PASSWORD: "password"
+  #       ports:
+  #         - 3306:3306
+  #       options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 50
+  #     - name: Set up Chrome latest
+  #       uses: browser-actions/setup-chrome@latest
+  #     - name: Prepate default mysql-data
+  #       run: |
+  #         python3 -V
+  #         pip install mysql-connector-python
+  #         python3 ./dev-support/database/init-database.py
+  #     - name: PWD
+  #       run: pwd
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: .
+  #     - name: test e2e
+  #       env:
+  #         PROFILE: "-Phadoop-2.9"
+  #         BUILD_FLAG: "clean package install -DskipTests"
+  #         TEST_FLAG: "verify -DskipRat -am"
+  #         TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+  #         TEST_PROJECTS: ""
+  #       run: |
+  #         if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
+  #         -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
+  #         if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+  #         echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
+  #         mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
