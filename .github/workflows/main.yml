@@ -28,8 +28,8 @@ jobs:
       BUILD_FLAG: "clean package install -DskipTests"
       TEST_FLAG: "test -DskipRat -am"
       MODULES: >
-        "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},
-        ${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
+        "-pl $EXCLUDE_COMMONS,$EXCLUDE_SUBMITTER,$EXCLUDE_WORKBENCH,$EXCLUDE_CLIENT,
+        $EXCLUDE_CLOUD,$EXCLUDE_SERVER,$EXCLUDE_ALL,$EXCLUDE_DIST,$EXCLUDE_TEST"
       TEST_MODULES: "-pl org.apache.submarine:submarine-commons-cluster"
       TEST_PROJECTS: ""
     steps:
