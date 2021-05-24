@@ -292,7 +292,7 @@ jobs:
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
 
   Submarine-commons-metastore:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [changes]
     services:
       mysql:
