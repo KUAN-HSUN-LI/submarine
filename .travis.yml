@@ -62,7 +62,7 @@ before_install:
   # mysql
   - sudo service mysql restart
   - ./dev-support/travis/install_external_dependencies.sh
-  - pip install mysql-connector-python
+  - pip3 install mysql-connector-python==5.1.39
   - python3 ./dev-support/database/init-database.py
   # protobuf 3.10.1
   - PROTOBUF_VERSION=3.10.1
