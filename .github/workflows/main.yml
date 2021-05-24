@@ -130,7 +130,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "verify -DskipRat -am -Durl=http://127.0.0.1"
+          TEST_FLAG: "verify -DskipRat -ntp -am -Durl=http://127.0.0.1"
           MODULES: ""
           TEST_MODULES: "-pl ${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_CLIENT}},:submarine-test-k8s"
           TEST_PROJECTS: ""
@@ -208,7 +208,7 @@ jobs:
       - name: Test
         env:
           BUILD_FLAG: "clean package install -DskipTests"
-          TEST_FLAG: "verify -DskipRat -am"
+          TEST_FLAG: "verify -DskipRat -ntp -am"
           TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
           TEST_PROJECTS: ""
         run: |
@@ -283,7 +283,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "test -DskipRat -am"
+          TEST_FLAG: "test -DskipRat -ntp -am"
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-cluster"
           TEST_PROJECTS: ""
@@ -359,7 +359,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "test -DskipRat -am"
+          TEST_FLAG: "test -DskipRat -ntp -am"
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-metastore"
           TEST_PROJECTS: ""
@@ -435,7 +435,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "test -DskipRat -am"
+          TEST_FLAG: "test -DskipRat -ntp -am"
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-rpc"
           TEST_PROJECTS: ""
@@ -511,7 +511,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "test -DskipRat -am"
+          TEST_FLAG: "test -DskipRat -ntp -am"
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-runtime"
           TEST_PROJECTS: ""
@@ -587,7 +587,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "test -DskipRat -am"
+          TEST_FLAG: "test -DskipRat -ntp -am"
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-unixusersync"
           TEST_PROJECTS: ""
