@@ -52,58 +52,69 @@ jobs:
             - 'submarine-workbench/**'
           website:
             - 'website/**'
-  
-  submarine-server:
+  test:
     runs-on: ubuntu-latest
+    env: 
+      TEST: ${{ env.SUBMARINE }}
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 50
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: "1.8"
-    - name: Set up Maven 3.6.3
-      uses: stCarolas/setup-maven@v4
-      with:
-        maven-version: 3.6.3
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/com1
-        key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-com-
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/org
-        key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-org-
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/net
-        key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-net-
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/io
-        key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-io-
-    - name: Check version
+    - run: echo ${TEST}
+    - name: add env
+      env: 
+        STEP_ENV: TEST-${{ env.SUBMARINE }}
       run: |
-        mvn --version
-        java -version
-    - name: Conditional Compile
-      run: |
-        mvn clean package install -DskipTests -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s -Phadoop-2.9 -B
-    - name: Test
-      env:
-        TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
-      run: |
-        if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
-        mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B
+        echo ${TEST}
+        echo ${STEP_ENV}
+#   submarine-server:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2
+#       with:
+#         fetch-depth: 50
+#     - name: Set up JDK 1.8
+#       uses: actions/setup-java@v1
+#       with:
+#         java-version: "1.8"
+#     - name: Set up Maven 3.6.3
+#       uses: stCarolas/setup-maven@v4
+#       with:
+#         maven-version: 3.6.3
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/com1
+#         key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-com-
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/org
+#         key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-org-
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/net
+#         key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-net-
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/io
+#         key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-io-
+#     - name: Check version
+#       run: |
+#         mvn --version
+#         java -version
+#     - name: Conditional Compile
+#       run: |
+#         mvn clean package install -DskipTests -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s -Phadoop-2.9 -B
+#     - name: Test
+#       env:
+#         TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
+#       run: |
+#         if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
+#         mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B
 #   submarine-commons-cluster:
 #     runs-on: ubuntu-latest
 #     env:
