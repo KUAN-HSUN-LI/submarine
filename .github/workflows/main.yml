@@ -54,16 +54,17 @@ jobs:
             - 'website/**'
   test:
     runs-on: ubuntu-latest
-    env: 
-      TEST: ${{ env.SUBMARINE }}
+#     env: 
+#       TEST: ${{ env.SUBMARINE }}
     steps:
-    - run: echo ${TEST}
+#     - run: echo ${TEST}
     - name: add env
       env: 
         STEP_ENV: TEST-${{ env.SUBMARINE }}
       run: |
         echo ${TEST}
         echo ${STEP_ENV}
+    - run: echo ${STEP_ENV}
 #   submarine-server:
 #     runs-on: ubuntu-latest
 #     steps:
