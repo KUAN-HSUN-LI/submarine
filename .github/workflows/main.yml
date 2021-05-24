@@ -33,7 +33,9 @@ jobs:
       submarine-workbench: ${{ steps.filter.outputs.submarine-workbench }}
       website: ${{ steps.filter.outputs.website }}
     steps:
-    # For pull requests it's not necessary to checkout the code
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 50
     - uses: dorny/paths-filter@v2
       id: filter
       with:
@@ -71,7 +73,13 @@ jobs:
         java -version
     - name: Conditional Compile
       run: |
-        mvn clean package install -DskipTests -pl :submarine-server -am -Phadoop-2.9 -B
+        mvn clean package install -DskipTests -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s -Phadoop-2.9 -B
+    - name: Test
+      env:
+        TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
+      run: |
+        if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
+        mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B
 #   submarine-commons-cluster:
 #     runs-on: ubuntu-latest
 #     env:
