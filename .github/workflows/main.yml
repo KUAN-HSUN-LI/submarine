@@ -215,7 +215,7 @@ jobs:
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
 
-  Submarine commons-cluster:
+  Submarine-commons-cluster:
     runs-on: ubuntu-latest
     needs: [changes]
     services:
@@ -291,7 +291,7 @@ jobs:
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
 
-  Submarine commons-metastore:
+  Submarine-commons-metastore:
     runs-on: ubuntu-latest
     needs: [changes]
     services:
@@ -367,7 +367,7 @@ jobs:
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
 
-  Submarine commons-rpc:
+  Submarine-commons-rpc:
     runs-on: ubuntu-latest
     needs: [changes]
     services:
@@ -443,7 +443,7 @@ jobs:
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
 
-  Submarine commons-runtime:
+  Submarine-commons-runtime:
     runs-on: ubuntu-latest
     needs: [changes]
     services:
@@ -519,7 +519,7 @@ jobs:
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
 
-  Submarine commons-unixusersync:
+  Submarine-commons-unixusersync:
     runs-on: ubuntu-latest
     needs: [changes]
     services:
