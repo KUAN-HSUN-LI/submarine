@@ -19,11 +19,17 @@ env:
   EXCLUDE_TEST: "!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
   EXCLUDE_SPARK_SECURTITY: "!:submarine-spark-security"
   MOZ_HEADLESS: 1
-
+  PROFILE: "-Phadoop-2.9"
+  BUILD_FLAG: "clean package install -ntp -DskipTests"
+  TEST_FLAG: "verify -DskipRat -am -Durl=http://127.0.0.1"
+  MODULES: ""
+  TEST_MODULES: >-
+    -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,
+    !:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,
+    !:submarine-client,:submarine-test-k8s
+  TEST_PROJECTS: ""
 
 jobs:
-  # JOB to run change detection
-  
   changes:
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
@@ -35,27 +41,29 @@ jobs:
       submarine-workbench: ${{ steps.filter.outputs.submarine-workbench }}
       website: ${{ steps.filter.outputs.website }}
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 50
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          submarine-client:
-            - 'submarine-client/**'
-          submarine-commons:
-            - 'submarine-commons/**'
-          submarine-sdk:
-            - 'submarine-sdk/**'
-          submarine-server:
-            - 'submarine-server/**'
-          submarine-workbench:
-            - 'submarine-workbench/**'
-          website:
-            - 'website/**'
-  submarine-server:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            submarine-client:
+              - 'submarine-client/**'
+            submarine-commons:
+              - 'submarine-commons/**'
+            submarine-sdk:
+              - 'submarine-sdk/**'
+            submarine-server:
+              - 'submarine-server/**'
+            submarine-workbench:
+              - 'submarine-workbench/**'
+            website:
+              - 'website/**'
+
+  Submarine-k8s:
     runs-on: ubuntu-latest
+    needs: [change]
     services:
       mysql:
         image: mysql:5.7
@@ -65,237 +73,658 @@ jobs:
           - 3306:3306
         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 50
-    - name: Set up Protobuf 3.10.1
-      uses: arduino/setup-protoc@v1
-      with:
-        version: "3.10.1"
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: "1.8"
-    - name: Set up Maven 3.6.3
-      uses: stCarolas/setup-maven@v4
-      with:
-        maven-version: 3.6.3
-    - name: Check version
-      run: |
-        mvn --version
-        java -version
-    
-    - name: Prepate default mysql-data
-      run: |
-        python3 -V
-        pip install mysql-connector-python
-        python3 ./dev-support/database/init-database.py
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/com1
-        key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-com-
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/org
-        key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-org-
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/net
-        key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-net-
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository/io
-        key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-io-
-    - name: Conditional Compile
-      run: |
-        mvn clean package install -DskipTests -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s -Phadoop-2.9 -B    
-    - name: Test
-      env:
-        TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
-      run: |
-        if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
-        if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
-        mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B 
-#   submarine-commons-cluster:
-#     runs-on: ubuntu-latest
-#     env:
-#       PROFILE: "-Phadoop-2.9"
-#       BUILD_FLAG: "clean package install -DskipTests"
-#       TEST_FLAG: "test -DskipRat -am"
-#       TEST_MODULES: "-pl org.apache.submarine:submarine-commons-cluster"
-#       TEST_PROJECTS: ""
-#     steps:
-#       - uses: actions/checkout@v2
-#         with:
-#           fetch-depth: 50
-#       - name: Set up JDK 1.8
-#         uses: actions/setup-java@v1
-#         with:
-#           java-version: "1.8"
-#       - name: Set up Maven 3.6.3
-#         uses: stCarolas/setup-maven@v4
-#         with:
-#           maven-version: 3.6.3
-#       - name: Check version
-#         run: |
-#           mvn --version
-#           java -version
-#       - name: Conditional Compile
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Set up Chrome latest
+        uses: browser-actions/setup-chrome@latest
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+          chrome --version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          TEST_FLAG: "verify -DskipRat -am -Durl=http://127.0.0.1"
+          MODULES: ""
+          TEST_MODULES: "-pl ${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_CLIENT}},:submarine-test-k8s"
+          TEST_PROJECTS: ""
+        run: |
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+  Submarine-e2e:
+    runs-on: ubuntu-latest
+    needs: [change]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Set up Chrome latest
+        uses: browser-actions/setup-chrome@latest
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+          chrome --version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          BUILD_FLAG: "clean package install -DskipTests"
+          TEST_FLAG: "verify -DskipRat -am"
+          TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+          TEST_PROJECTS: ""
+        run: |
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+  Submarine commons-cluster:
+    runs-on: ubuntu-latest
+    needs: [change]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:SQL_ROOT_PASSWORD: "password"
+        ports: MY
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build
+        env:
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          TEST_FLAG: "test -DskipRat -am"
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          TEST_MODULES: "-pl org.apache.submarine:submarine-commons-cluster"
+          TEST_PROJECTS: ""
+        run: |
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+  Submarine commons-metastore:
+    runs-on: ubuntu-latest
+    needs: [change]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build
+        env:
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          TEST_FLAG: "test -DskipRat -am"
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          TEST_MODULES: "-pl org.apache.submarine:submarine-commons-metastore"
+          TEST_PROJECTS: ""
+        run: |
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+  Submarine commons-rpc:
+    runs-on: ubuntu-latest
+    needs: [change]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build
+        env:
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          TEST_FLAG: "test -DskipRat -am"
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          TEST_MODULES: "-pl org.apache.submarine:submarine-commons-rpc"
+          TEST_PROJECTS: ""
+        run: |
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+  Submarine commons-runtime:
+    runs-on: ubuntu-latest
+    needs: [change]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build
+        env:
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          TEST_FLAG: "test -DskipRat -am"
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          TEST_MODULES: "-pl org.apache.submarine:submarine-commons-runtime"
+          TEST_PROJECTS: ""
+        run: |
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+  Submarine commons-unixusersync:
+    runs-on: ubuntu-latest
+    needs: [change]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build
+        env:
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          TEST_FLAG: "test -DskipRat -am"
+          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          TEST_MODULES: "-pl org.apache.submarine:submarine-commons-unixusersync"
+          TEST_PROJECTS: ""
+        run: |
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+
+# test-e2e:
+#   name: Test E2E
+#   runs-on: ubuntu-latest
+#   services:
+#     mysql:
+#       image: mysql:5.7
+#       env:
+#         MYSQL_ROOT_PASSWORD: "password"
+#       ports:
+#         - 3306:3306
+#       options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+#   steps:
+#     - uses: actions/checkout@v2
+#       with:
+#         fetch-depth: 50
+#     - name: Set up Protobuf 3.10.1
+#       uses: arduino/setup-protoc@v1
+#       with:
+#         version: "3.10.1"
+#     - name: Set up Chrome latest
+#       uses: browser-actions/setup-chrome@latest
+#     - name: Set up JDK 1.8
+#       uses: actions/setup-java@v1
+#       with:
+#         java-version: "1.8"
+#     - name: Set up Maven 3.6.3
+#       uses: stCarolas/setup-maven@v4
+#       with:
+#         maven-version: 3.6.3
+#     - name: Check version
+#       run: |
+#         mvn --version
+#         java -version
+#         chrome --version
+#     - name: Prepate default mysql-data
+#       run: |
+#         python3 -V
+#         pip install mysql-connector-python
+#         python3 ./dev-support/database/init-database.py
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/com1
+#         key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-com-
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/org
+#         key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-org-
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/net
+#         key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-net-
+#     - uses: actions/cache@v1
+#       with:
+#         path: ~/.m2/repository/io
+#         key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-maven-io-
+#     - name: Build Submarine
+#       env:
+#         PROFILE: "-Phadoop-2.9"
+#         BUILD_FLAG: "clean package install -DskipTests"
+#         MODULES: ""
+#       run: |
+#         echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+#         mvn --no-transfer-progress $BUILD_FLAG $MODULES $PROFILE -B
+#     - name: Upload Submarine dist
+#       uses: actions/upload-artifact@v2
+#       with:
+#         name: dist
+#         path: |
+#           submarine-dist
+#            ~/.m2
+#       - name: test e2e
 #         env:
-#           MODULES: "${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
+#           PROFILE: "-Phadoop-2.9"
+#           BUILD_FLAG: "clean package install -DskipTests"
+#           TEST_FLAG: "verify -DskipRat -am"
+#           TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+#           TEST_PROJECTS: ""
 #         run: |
-#           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-#           mvn --no-transfer-progress $BUILD_FLAG $MODULES $PROFILE -B
-#       - name: Test commons cluster
-#         env:
-#           MODULES: >
-#             "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}}
-#             ,${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
-#         run: |
-#           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit\
+#           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
 #           -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
 #           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
 #           echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
 #           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
-  # test-e2e:
-  #   name: Test E2E
-  #   runs-on: ubuntu-latest
-  #   services:
-  #     mysql:
-  #       image: mysql:5.7
-  #       env:
-  #         MYSQL_ROOT_PASSWORD: "password"
-  #       ports:
-  #         - 3306:3306
-  #       options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 50
-  #     - name: Set up Protobuf 3.10.1
-  #       uses: arduino/setup-protoc@v1
-  #       with:
-  #         version: "3.10.1"
-  #     - name: Set up Chrome latest
-  #       uses: browser-actions/setup-chrome@latest
-  #     - name: Set up JDK 1.8
-  #       uses: actions/setup-java@v1
-  #       with:
-  #         java-version: "1.8"
-  #     - name: Set up Maven 3.6.3
-  #       uses: stCarolas/setup-maven@v4
-  #       with:
-  #         maven-version: 3.6.3
-  #     - name: Check version
-  #       run: |
-  #         mvn --version
-  #         java -version
-  #         chrome --version
-  #     - name: Prepate default mysql-data
-  #       run: |
-  #         python3 -V
-  #         pip install mysql-connector-python
-  #         python3 ./dev-support/database/init-database.py
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/com1
-  #         key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-com-
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/org
-  #         key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-org-
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/net
-  #         key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-net-
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/io
-  #         key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-io-
-  #     - name: Build Submarine
-  #       env:
-  #         PROFILE: "-Phadoop-2.9"
-  #         BUILD_FLAG: "clean package install -DskipTests"
-  #         MODULES: ""
-  #       run: |
-  #         echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-  #         mvn --no-transfer-progress $BUILD_FLAG $MODULES $PROFILE -B
-  #     - name: Upload Submarine dist
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: dist
-  #         path: |
-  #           submarine-dist
-  #            ~/.m2
-  #       - name: test e2e
-  #         env:
-  #           PROFILE: "-Phadoop-2.9"
-  #           BUILD_FLAG: "clean package install -DskipTests"
-  #           TEST_FLAG: "verify -DskipRat -am"
-  #           TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
-  #           TEST_PROJECTS: ""
-  #         run: |
-  #           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
-  #           -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
-  #           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
-  #           echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
-  #           mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
 
-  # test-e2e:
-  #   name: Test E2E
-  #   runs-on: ubuntu-latest
-  #   needs: [submarine-build]
-  #   services:
-  #     mysql:
-  #       image: mysql:5.7
-  #       env:
-  #         MYSQL_ROOT_PASSWORD: "password"
-  #       ports:
-  #         - 3306:3306
-  #       options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 50
-  #     - name: Set up Chrome latest
-  #       uses: browser-actions/setup-chrome@latest
-  #     - name: Prepate default mysql-data
-  #       run: |
-  #         python3 -V
-  #         pip install mysql-connector-python
-  #         python3 ./dev-support/database/init-database.py
-  #     - name: PWD
-  #       run: pwd
-  #     - uses: actions/download-artifact@v2
-  #       with:
-  #         name: dist
-  #         path: .
-  #     - name: test e2e
-  #       env:
-  #         PROFILE: "-Phadoop-2.9"
-  #         BUILD_FLAG: "clean package install -DskipTests"
-  #         TEST_FLAG: "verify -DskipRat -am"
-  #         TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
-  #         TEST_PROJECTS: ""
-  #       run: |
-  #         if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
-  #         -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
-  #         if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
-  #         echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
-  #         mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+# test-e2e:
+#   name: Test E2E
+#   runs-on: ubuntu-latest
+#   needs: [submarine-build]
+#   services:
+#     mysql:
+#       image: mysql:5.7
+#       env:
+#         MYSQL_ROOT_PASSWORD: "password"
+#       ports:
+#         - 3306:3306
+#       options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+#   steps:
+#     - uses: actions/checkout@v2
+#       with:
+#         fetch-depth: 50
+#     - name: Set up Chrome latest
+#       uses: browser-actions/setup-chrome@latest
+#     - name: Prepate default mysql-data
+#       run: |
+#         python3 -V
+#         pip install mysql-connector-python
+#         python3 ./dev-support/database/init-database.py
+#     - name: PWD
+#       run: pwd
+#     - uses: actions/download-artifact@v2
+#       with:
+#         name: dist
+#         path: .
+#     - name: test e2e
+#       env:
+#         PROFILE: "-Phadoop-2.9"
+#         BUILD_FLAG: "clean package install -DskipTests"
+#         TEST_FLAG: "verify -DskipRat -am"
+#         TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+#         TEST_PROJECTS: ""
+#       run: |
+#         if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
+#         -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
+#         if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+#         echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
+#         mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
