@@ -277,14 +277,14 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am"
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-cluster"
           TEST_PROJECTS: ""
         run: |
@@ -353,14 +353,14 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am"
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-metastore"
           TEST_PROJECTS: ""
         run: |
@@ -429,14 +429,14 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am"
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-rpc"
           TEST_PROJECTS: ""
         run: |
@@ -505,14 +505,14 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am"
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-runtime"
           TEST_PROJECTS: ""
         run: |
@@ -581,14 +581,14 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am"
-          MODULES: "-pl ${EXCLUDE_COMMONS},${EXCLUDE_SUBMITTER},${EXCLUDE_WORKBENCH},${EXCLUDE_CLIENT},${EXCLUDE_CLOUD},${EXCLUDE_SERVER},${EXCLUDE_ALL},${EXCLUDE_DIST},${EXCLUDE_TEST}"
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
           TEST_MODULES: "-pl org.apache.submarine:submarine-commons-unixusersync"
           TEST_PROJECTS: ""
         run: |
