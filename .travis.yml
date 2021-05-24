@@ -61,8 +61,9 @@ env:
 before_install:
   # mysql
   - sudo service mysql restart
-  - ./dev-support/database/init-database.sh
   - ./dev-support/travis/install_external_dependencies.sh
+  - pip install mysql-connector-python
+  - python3 ./dev-support/database/init-database.py
   # protobuf 3.10.1
   - PROTOBUF_VERSION=3.10.1
   - PROTOC_FILENAME=protoc-${PROTOBUF_VERSION}-linux-x86_64.zip
@@ -224,12 +225,12 @@ matrix:
         - TEST_MODULES="-pl ${EXCLUDE_SUBMITTER_K8S},${EXCLUDE_WORKBENCH},${EXCLUDE_CLOUD},${EXCLUDE_COMMONS},${EXCLUDE_DIST},${EXCLUDE_TEST},${EXCLUDE_ALL},${EXCLUDE_SERVER},${EXCLUDE_SPARK_SECURTITY}"
         - TEST_PROJECTS=""
 
-#    Temporary disable this test, refer to SUBMARINE-672
-#    - name: Test submarine interpreter
-#      language: java
-#      jdk: "openjdk8"
-#      dist: xenial
-#      env: PYTHON="3" PROFILE="-Phadoop-2.9" BUILD_FLAG="clean package install -DskipTests -am" TEST_FLAG="test -DskipRat -am" MODULES="-pl $(echo ${EXCLUDE_INTERPRETER} | sed 's/!//g')" TEST_MODULES="-pl $(echo ${EXCLUDE_INTERPRETER} | sed 's/!//g')" TEST_PROJECTS=""
+    #    Temporary disable this test, refer to SUBMARINE-672
+    #    - name: Test submarine interpreter
+    #      language: java
+    #      jdk: "openjdk8"
+    #      dist: xenial
+    #      env: PYTHON="3" PROFILE="-Phadoop-2.9" BUILD_FLAG="clean package install -DskipTests -am" TEST_FLAG="test -DskipRat -am" MODULES="-pl $(echo ${EXCLUDE_INTERPRETER} | sed 's/!//g')" TEST_MODULES="-pl $(echo ${EXCLUDE_INTERPRETER} | sed 's/!//g')" TEST_PROJECTS=""
 
     - name: Test submarine workbench-web Angular
       language: node_js
@@ -237,8 +238,7 @@ matrix:
         - "10"
       before_install:
         - cd submarine-workbench/workbench-web
-      before_script:
-        npm install
+      before_script: npm install
       addons:
         chrome: stable
         firefox: latest
