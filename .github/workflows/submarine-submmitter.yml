@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 120
     strategy:
       matrix:
-        hadoop-version: [2.9, 2.10, 3.1, 3.2]
+        hadoop-version: ["2.9", "2.10", "3.1", "3.2"]
     services:
       mysql:
         image: mysql:5.7
@@ -78,11 +78,7 @@ jobs:
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am -ntp"
-          TEST_MODULES: >-
-            -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-commons-cluster,
-            !:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-dist,
-            !:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s,!:submarine-all,!:submarine-server-api,!:submarine-server-core,
-            !:submarine-server-rpc,!:submarine-spark-security
+          TEST_MODULES: -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s,!:submarine-all,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-spark-security
           PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
           TEST_PROJECTS: ""
         run: |
