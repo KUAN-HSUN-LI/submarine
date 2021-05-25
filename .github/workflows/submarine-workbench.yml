@@ -44,4 +44,4 @@ jobs:
       - name: Test with chrome
         run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
       - name: Test with firefox
-        npm run test -- --no-watch --no-progress --browsers=FirefoxHeadless
+        run: npm run test -- --no-watch --no-progress --browsers=FirefoxHeadless

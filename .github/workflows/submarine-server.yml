@@ -1,9 +1,9 @@
-name: submarine-e2e
+name: submarine-server
 
 on: [push]
 
 jobs:
-  Submarine-e2e:
+  Submarine-server:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -74,6 +74,7 @@ jobs:
           PROFILE: "-Phadoop-2.9"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
@@ -85,4 +86,5 @@ jobs:
           TEST_PROJECTS: ""
         run: |
           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
+          echo ">>> mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS"
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS

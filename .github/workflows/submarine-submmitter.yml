@@ -73,6 +73,7 @@ jobs:
           PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
@@ -85,4 +86,5 @@ jobs:
           PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
           TEST_PROJECTS: ""
         run: |
+          echo ">>> mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS"
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
