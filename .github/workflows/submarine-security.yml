@@ -1,9 +1,9 @@
-name: submarine-submitter
+name: submarine-security
 
 on: [push]
 
 jobs:
-  submarine-submitter:
+  submarine-security:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     strategy:
@@ -61,7 +61,7 @@ jobs:
         env:
           BUILD_FLAG: "--batch-mode clean install -Dmaven.javadoc.skip=true -ntp"
           MODULES: "-pl :submarine-spark-security"
-          PROFILE: "-Pspark-${{matrix.spark-version}} -Pranger--${{matrix.range-version}}"
+          PROFILE: "-Pspark-${{matrix.spark-version}} -Pranger-${{matrix.range-version}}"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B

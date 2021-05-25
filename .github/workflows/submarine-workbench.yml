@@ -38,10 +38,12 @@ jobs:
         run: |
           mvn $BUILD_FLAG $MODULES -B
       - name: Install
+        working-directory: ./submarine-workbench/workbench-web
         run: |
-          cd submarine-workbench/workbench-web
           npm install
       - name: Test with chrome
+        working-directory: ./submarine-workbench/workbench-web
         run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
       - name: Test with firefox
+        working-directory: ./submarine-workbench/workbench-web
         run: npm run test -- --no-watch --no-progress --browsers=FirefoxHeadless

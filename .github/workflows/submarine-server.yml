@@ -69,8 +69,8 @@ jobs:
         env:
           BUILD_FLAG: "clean package install -ntp -DskipTests"
           MODULES: >-
-            -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,
-            !:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
+            -pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,
+            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
           PROFILE: "-Phadoop-2.9"
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
@@ -78,10 +78,10 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "verify -DskipRat -ntp -am"
+          TEST_FLAG: "test -DskipRat -am"
           TEST_MODULES: >-
-            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core
+            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,
+            !:submarine-commons-utils,org.apache.submarine:submarine-server-core
           PROFILE: "-Phadoop-2.9"
           TEST_PROJECTS: ""
         run: |
