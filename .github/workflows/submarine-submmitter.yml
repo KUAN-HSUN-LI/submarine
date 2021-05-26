@@ -8,9 +8,9 @@ jobs:
     timeout-minutes: 120
     strategy:
       matrix:
-        hadoop-version: ["2.9", "2.10", "3.1", "3.2"]
-      max-parallel: 2
-      fail-fast: false
+        hadoop-version: ["2.9"]
+      # max-parallel: 2
+      # fail-fast: false
     services:
       mysql:
         image: mysql:5.7
@@ -44,30 +44,30 @@ jobs:
           python3 -V
           pip install mysql-connector-python
           python3 ./dev-support/database/init-database.py
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-com-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-org-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-net-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-io-
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/com1
+      #     key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-com-
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/org
+      #     key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-org-
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/net
+      #     key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-net-
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/io
+      #     key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-io-
       - name: Build
         env:
           BUILD_FLAG: "clean package install -DskipTests -DskipRat -ntp"
