@@ -39,11 +39,11 @@ jobs:
         run: |
           mvn --version
           java -version
-      - name: Prepate default mysql-data
-        run: |
-          python3 -V
-          pip install mysql-connector-python
-          python3 ./dev-support/database/init-database.py
+      # - name: Prepate default mysql-data
+      #   run: |
+      #     python3 -V
+      #     pip install mysql-connector-python
+      #     python3 ./dev-support/database/init-database.py
       - uses: actions/cache@v2
         with:
           path: |
