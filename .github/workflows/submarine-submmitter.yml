@@ -11,14 +11,14 @@ jobs:
         hadoop-version: ["2.9"]
       # max-parallel: 2
       # fail-fast: false
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: "password"
-        ports:
-          - 3306:3306
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    # services:
+    #   mysql:
+    #     image: mysql:5.7
+    #     env:
+    #       MYSQL_ROOT_PASSWORD: "password"
+    #     ports:
+    #       - 3306:3306
+    #     options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
       - uses: actions/checkout@v2
         with:
@@ -44,6 +44,11 @@ jobs:
           python3 -V
           pip install mysql-connector-python
           python3 ./dev-support/database/init-database.py
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
       # - uses: actions/cache@v1
       #   with:
       #     path: ~/.m2/repository/com1
