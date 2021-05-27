@@ -13,6 +13,8 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+      submarine-server:
+        image: apache/submarine:server-0.6.0-SNAPSHOT
     steps:
       - uses: actions/checkout@v2
         with:
@@ -41,38 +43,38 @@ jobs:
           python3 -V
           pip install mysql-connector-python
           python3 ./dev-support/database/init-database.py
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-com-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-org-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-net-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-io-
-      - name: Build
-        env:
-          BUILD_FLAG: "clean package install -ntp -DskipTests"
-          MODULES: ""
-          PROFILE: "-Phadoop-2.9"
-        run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/com1
+      #     key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-com-
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/org
+      #     key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-org-
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/net
+      #     key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-net-
+      # - uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2/repository/io
+      #     key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-maven-io-
+      # - name: Build
+      #   env:
+      #     BUILD_FLAG: "clean package install -ntp -DskipTests"
+      #     MODULES: ""
+      #     PROFILE: "-Phadoop-2.9"
+      #   run: |
+      #     export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+      #     mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "verify -DskipRat -ntp -am"
