@@ -36,7 +36,7 @@ test -d "$OUTPUT_BIN" || mkdir -p "$OUTPUT_BIN"
 
 function hack::verify_kubectl() {
     if test -x "$KUBECTL_BIN"; then
-        [[ "$($KUBECTL_BIN version --client --short | grep -o -E '[0-9]+\.[0-9]+\.[0-9]+')" == "$KUBECTL_VERSION" ]]
+        [[ ! "$($KUBECTL_BIN version --client --short | grep -o -E '[0-9]+\.[0-9]+\.[0-9]+')" < "$KUBECTL_VERSION" ]]
         return
     fi
     return 1
@@ -68,7 +68,7 @@ function hack::ensure_kubectl() {
 
 function hack::verify_kind() {
     if test -x "$KIND_BIN"; then
-        [[ "$($KIND_BIN --version 2>&1 | cut -d ' ' -f 3)" == "$KIND_VERSION" ]]
+        [[ ! "$($KIND_BIN --version 2>&1 | cut -d ' ' -f 3)" < "$KIND_VERSION" ]]
         return
     fi
     return 1
