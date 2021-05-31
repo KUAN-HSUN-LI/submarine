@@ -104,60 +104,9 @@ jobs:
           name: submarine-bin
       - name: Untar binaries
         run: |
-          mkdir -p submarine-dist/target/submarine-dist-{{env.VERSION}}-hadoop-{{env.HADOOP_VERSION}}
-          tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-{{env.VERSION}}-hadoop-{{env.HADOOP_VERSION}}
-          sudo chmod -R a+rwX submarine-dist/target/submarine-dist-{{env.VERSION}}-hadoop-{{env.HADOOP_VERSION}}
-      - name: Check path
-        run: |
-          echo "1"
-          ls -al
-          cd submarine-dist
-          echo "2"
-          ls -al
-          cd target
-          echo "3"
-          ls -al
-          echo "4"
-          cd submarine-dist-{{env.VERSION}}-hadoop-{{env.HADOOP_VERSION}}
-          ls -al
-          echo "5"
-          cd submarine-dist-{{env.VERSION}}-hadoop-{{env.HADOOP_VERSION}}
-          ls -al
-          echo "6"
-          cd bin
-          ls -al
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/com1
-      #     key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-com-
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/org
-      #     key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-org-
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/net
-      #     key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-net-
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/io
-      #     key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-io-
-      # - name: Build
-      #   env:
-      #     BUILD_FLAG: "clean package install -ntp -DskipTests"
-      #     MODULES: ""
-      #     PROFILE: "-Phadoop-2.9"
-      #   run: |
-      #     export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-      #     mvn $BUILD_FLAG $MODULES $PROFILE -B
+          mkdir -p submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+          tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+          sudo chmod -R a+rwX submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
       - name: Test
         env:
           TEST_FLAG: "verify -DskipRat -ntp -am"

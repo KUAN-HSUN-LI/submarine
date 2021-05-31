@@ -2,17 +2,83 @@ name: submarine-k8s
 
 on: [push]
 
+env:
+  VERSION: "0.6.0-SNAPSHOT"
+  HADOOP_VERSION: "2.9"
+  EXCLUDE_SERVER: "!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc"
+  EXCLUDE_CLIENT: "!:submarine-client"
+  EXCLUDE_COMMONS: "!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils"
+
 jobs:
+  # build:
+  #   name: Build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up JDK 1.8
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: "1.8"
+  #     # - name: Test
+  #     #   run: |
+  #     #     echo "1"
+  #     #     KUBECTL_BIN="$(command -v kubectl)"
+  #     #     echo "2"
+  #     #     if test -x "$KUBECTL_BIN"; then echo "can execute" fi
+  #     #     echo "3"
+  #     #     kubectl version
+  #     - name: Set up Maven 3.6.3
+  #       uses: stCarolas/setup-maven@v4
+  #       with:
+  #         maven-version: 3.6.3
+  #     - name: Check version
+  #       run: |
+  #         mvn --version
+  #         java -version
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/com1
+  #         key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-com-
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/org
+  #         key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-org-
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/net
+  #         key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-net-
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.m2/repository/io
+  #         key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-io-
+  #     - name: Build with Maven
+  #       run: |
+  #         export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+  #         mvn --no-transfer-progress -DskipTests install
+  #     - name: Store build binary
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: submarine-bin
+  #         path: submarine-dist/target/submarine-dist*.tar.gz
   submarine-k8s:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: "password"
-        ports:
-          - 3306:3306
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    # needs: [build]
+    # services:
+    #   mysql:
+    #     image: mysql:5.7
+    #     env:
+    #       MYSQL_ROOT_PASSWORD: "password"
+    #     ports:
+    #       - 3306:3306
+    #     options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
       - uses: actions/checkout@v2
         with:
@@ -35,12 +101,6 @@ jobs:
         run: |
           mvn --version
           java -version
-          chrome --version
-      - name: Prepate default mysql-data
-        run: |
-          python3 -V
-          pip install mysql-connector-python
-          python3 ./dev-support/database/init-database.py
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
@@ -65,14 +125,29 @@ jobs:
           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-io-
-      - name: Build
-        env:
-          BUILD_FLAG: "clean package install -ntp -DskipTests"
-          MODULES: ""
-          PROFILE: "-Phadoop-2.9"
+      # - name: Prepate default mysql-data
+      #   run: |
+      #     python3 -V
+      #     pip install mysql-connector-python
+      #     python3 ./dev-support/database/init-database.py
+      # - name: Download compiled Submarine binaries
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: submarine-bin
+      # - name: Untar binaries
+      #   run: |
+      #     mkdir -p submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+      #     tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+      #     sudo chmod -R a+rwX submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+      - name: Build with Maven
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-          mvn $BUILD_FLAG $MODULES $PROFILE -B
+          mvn --no-transfer-progress -DskipTests package
+      # - name: Test k8s
+      #   run: |
+      #     kubectl version
+      #     which kubectl
+      #     ls -al $(which kubectl)
       - name: Test
         env:
           TEST_FLAG: "verify -DskipRat -ntp -am -Durl=http://127.0.0.1"
@@ -80,4 +155,4 @@ jobs:
           PROFILE: "-Phadoop-2.9"
           TEST_PROJECTS: ""
         run: |
-          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+          mvn verify -DskipRat -am -Durl=http://127.0.0.1 -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s -Phadoop-2.9 -B

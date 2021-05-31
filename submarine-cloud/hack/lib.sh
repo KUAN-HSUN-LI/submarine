@@ -62,7 +62,7 @@ function hack::ensure_kubectl() {
     tmpfile=$(mktemp)
     trap "test -f $tmpfile && rm $tmpfile" RETURN
     curl --retry 10 -L -o $tmpfile https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl
-    mv $tmpfile $KUBECTL_BIN
+    sudo mv $tmpfile $KUBECTL_BIN
     chmod +x $KUBECTL_BIN
 }
 
@@ -94,7 +94,7 @@ function hack::ensure_kind() {
     tmpfile=$(mktemp)
     trap "test -f $tmpfile && rm $tmpfile" RETURN
     curl --retry 10 -L -o $tmpfile https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-$(uname)-amd64
-    mv $tmpfile $KIND_BIN
+    sudo mv $tmpfile $KIND_BIN
     chmod +x $KIND_BIN
 }
 
