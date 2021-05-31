@@ -71,9 +71,12 @@ function install_submarine() {
     $KIND_BIN load docker-image apache/submarine:database-${SUBMARINE_VERSION}
 
     if ! docker inspect apache/submarine:server-${SUBMARINE_VERSION} >/dev/null ; then
+      echo "docker inspect false"
       docker pull apache/submarine:server-${SUBMARINE_VERSION}
     fi
+    echo "$KIND_BIN execute"
     $KIND_BIN load docker-image apache/submarine:server-${SUBMARINE_VERSION}
+    echo "$KUBECTL_BIN execute"
     $KUBECTL_BIN apply -f $ROOT/manifests/submarine-cluster/
 
     echo "NOTE: You can open your browser and access the submarine workbench at http://127.0.0.1/"
