@@ -59,12 +59,6 @@ function install_submarine() {
     fi
     $KUBECTL_BIN create configmap --namespace default submarine-config --from-file=${ROOT}/hack/conf/submarine-site.xml --from-file=${ROOT}/hack/conf/log4j.properties
 
-    if ! docker inspect apache/submarine:operator-${SUBMARINE_VERSION} >/dev/null ; then
-      docker pull apache/submarine:operator-${SUBMARINE_VERSION}
-    fi
-    $KIND_BIN load docker-image apache/submarine:operator-${SUBMARINE_VERSION}
-    $KUBECTL_BIN apply -f $ROOT/manifests/submarine-operator/
-
     if ! docker inspect apache/submarine:database-${SUBMARINE_VERSION} >/dev/null ; then
       docker pull apache/submarine:database-${SUBMARINE_VERSION}
     fi
@@ -81,6 +75,13 @@ function install_submarine() {
     echo "$KUBECTL_BIN execute"
     $KUBECTL_BIN apply -f $ROOT/manifests/submarine-cluster/
     df -h
+
+    if ! docker inspect apache/submarine:operator-${SUBMARINE_VERSION} >/dev/null ; then
+      docker pull apache/submarine:operator-${SUBMARINE_VERSION}
+    fi
+    $KIND_BIN load docker-image apache/submarine:operator-${SUBMARINE_VERSION}
+    $KUBECTL_BIN apply -f $ROOT/manifests/submarine-operator/
+
     echo "NOTE: You can open your browser and access the submarine workbench at http://127.0.0.1/"
   fi
 }
