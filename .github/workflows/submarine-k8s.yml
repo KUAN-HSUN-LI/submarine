@@ -10,64 +10,64 @@ env:
   EXCLUDE_COMMONS: "!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils"
 
 jobs:
-  # build:
-  #   name: Build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Set up JDK 1.8
-  #       uses: actions/setup-java@v1
-  #       with:
-  #         java-version: "1.8"
-  #     # - name: Test
-  #     #   run: |
-  #     #     echo "1"
-  #     #     KUBECTL_BIN="$(command -v kubectl)"
-  #     #     echo "2"
-  #     #     if test -x "$KUBECTL_BIN"; then echo "can execute" fi
-  #     #     echo "3"
-  #     #     kubectl version
-  #     - name: Set up Maven 3.6.3
-  #       uses: stCarolas/setup-maven@v4
-  #       with:
-  #         maven-version: 3.6.3
-  #     - name: Check version
-  #       run: |
-  #         mvn --version
-  #         java -version
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/com1
-  #         key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-com-
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/org
-  #         key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-org-
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/net
-  #         key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-net-
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: ~/.m2/repository/io
-  #         key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-maven-io-
-  #     - name: Build with Maven
-  #       run: |
-  #         export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-  #         mvn --no-transfer-progress -DskipTests install
-  #     - name: Store build binary
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: submarine-bin
-  #         path: submarine-dist/target/submarine-dist*.tar.gz
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      # - name: Test
+      #   run: |
+      #     echo "1"
+      #     KUBECTL_BIN="$(command -v kubectl)"
+      #     echo "2"
+      #     if test -x "$KUBECTL_BIN"; then echo "can execute" fi
+      #     echo "3"
+      #     kubectl version
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-
+      - name: Build with Maven
+        run: |
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          mvn --no-transfer-progress -DskipTests install
+      - name: Store build binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: submarine-bin
+          path: submarine-dist/target/submarine-dist*.tar.gz
   submarine-k8s:
     runs-on: ubuntu-latest
     # needs: [build]
@@ -135,15 +135,16 @@ jobs:
       #     python3 -V
       #     pip install mysql-connector-python
       #     python3 ./dev-support/database/init-database.py
-      # - name: Download compiled Submarine binaries
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: submarine-bin
-      # - name: Untar binaries
-      #   run: |
-      #     mkdir -p submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-      #     tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-      #     sudo chmod -R a+rwX submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+      - name: Download compiled Submarine binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: submarine-bin
+      - name: Untar binaries
+        run: |
+          mkdir -p submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+          tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+          mv submarine-dist*.tar.gz submarine-dist/target/
+          sudo chmod -R a+rwX submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
       - name: Build with Maven
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
