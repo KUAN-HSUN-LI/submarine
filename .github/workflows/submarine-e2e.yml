@@ -123,7 +123,7 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          BUILD_FLAG: "clean package install -DskipTests -DskipRat -ntp"
+          BUILD_FLAG: "clean install -DskipTests -DskipRat -ntp"
           MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-dist"
           PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
         run: |
