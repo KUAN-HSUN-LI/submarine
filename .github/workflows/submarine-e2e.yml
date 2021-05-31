@@ -63,7 +63,6 @@ jobs:
     strategy:
       matrix:
         hadoop-version: ["2.9", "2.10", "3.1", "3.2"]
-      max-parallel: 2
       fail-fast: false
     # services:
     #   mysql:
