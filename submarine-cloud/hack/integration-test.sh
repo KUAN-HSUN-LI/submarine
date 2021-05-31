@@ -28,7 +28,9 @@ hack::ensure_kubectl
 export KUBECONFIG=~/.kube/kind-config-${clusterName:-kind}
 
 function start() {
-  $ROOT/hack/kind-cluster-build.sh
+  # if !hack::verify_kind; then
+    # $ROOT/hack/kind-cluster-build.sh
+  # fi
   $SUBMARINE_HOME/dev-support/k8s/deploy-traefik.sh
   $SUBMARINE_HOME/dev-support/k8s/deploy-kubeflow-operators.sh -a
   $SUBMARINE_HOME/dev-support/k8s/deploy-notebook-controller.sh
