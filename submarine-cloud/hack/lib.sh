@@ -67,12 +67,13 @@ function hack::ensure_kubectl() {
 }
 
 function hack::verify_kind() {
+    return 1
     if test -x "$KIND_BIN"; then
         if { echo "$($KIND_BIN --version 2>&1 | cut -d ' ' -f 3)"; echo "$KIND_VERSION"; } | sort --version-sort --check; then
         # [[ ! "$($KIND_BIN --version 2>&1 | cut -d ' ' -f 3)" < "$KIND_VERSION" ]]
-            return 0;
+            return 0
         fi
-        return 1;
+        return 1
     fi
     return 1
 }

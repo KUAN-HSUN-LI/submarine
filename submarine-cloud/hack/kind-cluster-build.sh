@@ -80,7 +80,7 @@ done
 
 clusterName=${clusterName:-kind}
 nodeNum=${nodeNum:-1}
-k8sVersion=${k8sVersion:-v1.20.2}
+k8sVersion=${k8sVersion:-v1.14.2}
 volumeNum=${volumeNum:-1}
 
 echo "clusterName: ${clusterName}"
