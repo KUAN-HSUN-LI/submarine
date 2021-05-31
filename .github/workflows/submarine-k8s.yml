@@ -145,10 +145,10 @@ jobs:
           tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
           mv submarine-dist*.tar.gz submarine-dist/target/
           sudo chmod -R a+rwX submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-      - name: Build with Maven
-        run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-          mvn --no-transfer-progress -DskipTests package
+      # - name: Build with Maven
+      #   run: |
+      #     export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+      #     mvn --no-transfer-progress -DskipTests package
       # - name: Test k8s
       #   run: |
       #     kubectl version
