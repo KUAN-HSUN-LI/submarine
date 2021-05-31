@@ -77,9 +77,10 @@ function install_submarine() {
     df -h
     echo "$KIND_BIN execute"
     $KIND_BIN load docker-image apache/submarine:server-${SUBMARINE_VERSION}
+    df -h
     echo "$KUBECTL_BIN execute"
     $KUBECTL_BIN apply -f $ROOT/manifests/submarine-cluster/
-
+    df -h
     echo "NOTE: You can open your browser and access the submarine workbench at http://127.0.0.1/"
   fi
 }
