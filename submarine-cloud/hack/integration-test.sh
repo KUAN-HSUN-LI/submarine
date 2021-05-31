@@ -24,6 +24,7 @@ SUBMARINE_HOME=${ROOT}/..
 source $ROOT/hack/lib.sh
 
 hack::ensure_kubectl
+hack::ensure_kind
 
 export KUBECONFIG=~/.kube/kind-config-${clusterName:-kind}
 
