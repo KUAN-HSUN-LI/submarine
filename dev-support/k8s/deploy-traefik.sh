@@ -46,7 +46,6 @@ function load_image_to_registry() {
   if [[ ! $(docker inspect "$1" > /dev/null) ]] ; then
     docker pull "$1"
   fi
-  hack::ensure_kind
   ${KIND_BIN} load docker-image "$1"
 }
 
