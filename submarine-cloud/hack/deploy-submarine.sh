@@ -23,7 +23,7 @@ SUBMARINE_HOME=${ROOT}/..
 SUBMARINE_VERSION="0.6.0-SNAPSHOT"
 
 source $ROOT/hack/lib.sh
-
+df -h
 hack::ensure_kubectl
 
 # Install submarine in k8s cluster
@@ -74,6 +74,7 @@ function install_submarine() {
       echo "docker inspect false"
       docker pull apache/submarine:server-${SUBMARINE_VERSION}
     fi
+    df -h
     echo "$KIND_BIN execute"
     $KIND_BIN load docker-image apache/submarine:server-${SUBMARINE_VERSION}
     echo "$KUBECTL_BIN execute"

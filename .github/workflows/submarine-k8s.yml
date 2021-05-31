@@ -103,6 +103,9 @@ jobs:
           java -version
           kind version
           kubectl version
+      - name: Check space
+        run: |
+          df -h
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
@@ -150,6 +153,9 @@ jobs:
       #     kubectl version
       #     which kubectl
       #     ls -al $(which kubectl)
+      - name: Check space
+        run: |
+          df -h
       - name: Test
         env:
           TEST_FLAG: "verify -DskipRat -ntp -am -Durl=http://127.0.0.1"
