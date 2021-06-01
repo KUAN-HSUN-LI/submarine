@@ -628,28 +628,28 @@ jobs:
           key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-com-
+            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-org-
+            ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
           key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-net-
+            ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-io-
+            ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - name: Build
         env:
           BUILD_FLAG: "--batch-mode clean package -Dmaven.javadoc.skip=true -ntp"
@@ -685,6 +685,10 @@ jobs:
         with:
           fetch-depth: 50
           path: submarine
+      - name: Set up Protobuf 3.10.1
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.10.1"
       - name: Move to /mnt
         run: |
           sudo chmod 777 /mnt
@@ -730,7 +734,7 @@ jobs:
           cd /mnt/submarine/
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
   submarine-k8s:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: [ubuntu-latest]
     needs: [build]
     steps:
       - uses: actions/checkout@v2
