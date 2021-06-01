@@ -23,7 +23,7 @@ SUBMARINE_HOME=${ROOT}/..
 SUBMARINE_VERSION="0.6.0-SNAPSHOT"
 
 source $ROOT/hack/lib.sh
-df -h
+
 hack::ensure_kubectl
 
 # Install submarine in k8s cluster
@@ -59,28 +59,22 @@ function install_submarine() {
     fi
     $KUBECTL_BIN create configmap --namespace default submarine-config --from-file=${ROOT}/hack/conf/submarine-site.xml --from-file=${ROOT}/hack/conf/log4j.properties
 
+    if ! docker inspect apache/submarine:operator-${SUBMARINE_VERSION} >/dev/null ; then
+      docker pull apache/submarine:operator-${SUBMARINE_VERSION}
+    fi
+    $KIND_BIN load docker-image apache/submarine:operator-${SUBMARINE_VERSION}
+    $KUBECTL_BIN apply -f $ROOT/manifests/submarine-operator/
+
     if ! docker inspect apache/submarine:database-${SUBMARINE_VERSION} >/dev/null ; then
       docker pull apache/submarine:database-${SUBMARINE_VERSION}
     fi
     $KIND_BIN load docker-image apache/submarine:database-${SUBMARINE_VERSION}
 
     if ! docker inspect apache/submarine:server-${SUBMARINE_VERSION} >/dev/null ; then
-      echo "docker inspect false"
       docker pull apache/submarine:server-${SUBMARINE_VERSION}
     fi
-    df -h
-    echo "$KIND_BIN execute"
     $KIND_BIN load docker-image apache/submarine:server-${SUBMARINE_VERSION}
-    df -h
-    echo "$KUBECTL_BIN execute"
     $KUBECTL_BIN apply -f $ROOT/manifests/submarine-cluster/
-    df -h
-
-    if ! docker inspect apache/submarine:operator-${SUBMARINE_VERSION} >/dev/null ; then
-      docker pull apache/submarine:operator-${SUBMARINE_VERSION}
-    fi
-    $KIND_BIN load docker-image apache/submarine:operator-${SUBMARINE_VERSION}
-    $KUBECTL_BIN apply -f $ROOT/manifests/submarine-operator/
 
     echo "NOTE: You can open your browser and access the submarine workbench at http://127.0.0.1/"
   fi
@@ -103,7 +97,6 @@ usage() {
     cat <<EOF
 This script use kind to create Submarine cluster, about kind please refer: https://kind.sigs.k8s.io/
 * This script will automatically install kubectr-${KUBECTL_VERSION} and kind-${KIND_VERSION} in ${OUTPUT_BIN}
-
 Options:
        -d,--database           ip/service of submarine database, default value: submarine-database
        -u,--uninstall          uninstall submarine cluster
