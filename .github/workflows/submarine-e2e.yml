@@ -579,6 +579,9 @@ jobs:
   submarine-workbench:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
       - name: Set up Maven 3.6.3
         uses: stCarolas/setup-maven@v4
         with:
