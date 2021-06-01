@@ -78,7 +78,7 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build with Maven
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn --no-transfer-progress -DskipTests package
       - name: Store build binary
         uses: actions/upload-artifact@v2
@@ -136,7 +136,7 @@ jobs:
         env:
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
@@ -209,7 +209,7 @@ jobs:
         env:
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
@@ -269,7 +269,7 @@ jobs:
         env:
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
@@ -330,7 +330,7 @@ jobs:
         env:
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
@@ -390,7 +390,7 @@ jobs:
         env:
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
@@ -468,7 +468,7 @@ jobs:
           MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
           PROFILE: "-Phadoop-2.9"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
@@ -539,7 +539,7 @@ jobs:
           MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-dist"
           PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
@@ -656,7 +656,7 @@ jobs:
           MODULES: "-pl :submarine-spark-security"
           PROFILE: "-Pspark-${{matrix.spark-version}} -Pranger-${{matrix.range-version}}"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
 
   Submarine-e2e:

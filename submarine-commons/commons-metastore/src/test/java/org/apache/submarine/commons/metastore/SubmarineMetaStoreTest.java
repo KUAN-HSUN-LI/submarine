@@ -66,7 +66,7 @@ public class SubmarineMetaStoreTest {
     LOG.info("listTables >>> ");
 
     String url = "jdbc:mysql://127.0.0.1:3306/metastore_test?" +
-        "useUnicode=true&characterEncoding=UTF-8&amp;autoReconnect=true&" +
+        "useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&" +
         "failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&useSSL=false";
     String username = "metastore_test";
     String password = "password_test";
