@@ -79,12 +79,17 @@ jobs:
       - name: Build with Maven
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-          mvn --no-transfer-progress -DskipTests install
+          mvn --no-transfer-progress -DskipTests package
       - name: Store build binary
         uses: actions/upload-artifact@v2
         with:
           name: submarine-bin
           path: submarine-dist/target/submarine-dist*.tar.gz
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
+
   Submarine-commons-cluster:
     runs-on: ubuntu-latest
     steps:
@@ -144,6 +149,10 @@ jobs:
           TEST_PROJECTS: ""
         run: |
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   Submarine-commons-metastore:
     runs-on: ubuntu-latest
@@ -217,6 +226,10 @@ jobs:
           TEST_PROJECTS: ""
         run: |
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   Submarine-commons-rpc:
     runs-on: ubuntu-latest
@@ -278,6 +291,10 @@ jobs:
         run: |
           echo ">>> mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS"
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   Submarine-commons-runtime:
     runs-on: ubuntu-latest
@@ -338,6 +355,10 @@ jobs:
           TEST_PROJECTS: ""
         run: |
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   Submarine-commons-unixusersync:
     runs-on: ubuntu-latest
@@ -399,6 +420,10 @@ jobs:
         run: |
           if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   Submarine-server:
     runs-on: ubuntu-latest
@@ -481,6 +506,10 @@ jobs:
           if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
           echo ">>> mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS"
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   submarine-submitter:
     runs-on: ubuntu-latest
@@ -551,6 +580,10 @@ jobs:
         run: |
           echo ">>> mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS"
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   submarine-workbench:
     runs-on: ubuntu-latest
@@ -595,6 +628,10 @@ jobs:
       - name: Test with firefox
         working-directory: ./submarine-workbench/workbench-web
         run: npm run test -- --no-watch --no-progress --browsers=FirefoxHeadless
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   submarine-security:
     runs-on: ubuntu-latest
@@ -628,7 +665,6 @@ jobs:
           key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
@@ -636,7 +672,6 @@ jobs:
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
@@ -644,7 +679,6 @@ jobs:
           key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
@@ -652,8 +686,7 @@ jobs:
           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
-            ${{ runner.os }}-maven-io
+            ${{ runner.os }}-maven-io-
       - name: Build and Test
         env:
           BUILD_FLAG: "--batch-mode clean package -Dmaven.javadoc.skip=true -ntp"
@@ -662,6 +695,10 @@ jobs:
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
 
   Submarine-e2e:
     runs-on: ubuntu-latest
@@ -729,6 +766,11 @@ jobs:
         run: |
           cd /mnt/submarine/
           mvn $TEST_FLAG $TEST_MODULES $PROFILE -B $TEST_PROJECTS
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
+
   submarine-k8s:
     runs-on: [ubuntu-latest]
     needs: [build]
@@ -820,3 +862,7 @@ jobs:
         run: |
           pwd
           mvn verify -DskipRat -am -Durl=http://127.0.0.1 -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s -Phadoop-2.9 -B
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine
