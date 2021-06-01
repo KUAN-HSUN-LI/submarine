@@ -517,8 +517,8 @@ jobs:
           path: ~/.m2/repository/org
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-submitter-${{matrix.hadoop-version}}
           restore-keys: |
+            ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-submitter-${{matrix.hadoop-version}}  
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
@@ -737,6 +737,16 @@ jobs:
     runs-on: [ubuntu-latest]
     needs: [build]
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: "true"
+      - name: Build
+        run: |
+          echo "Free space:"
+          df -h
       - uses: actions/checkout@v2
         with:
           fetch-depth: 50
