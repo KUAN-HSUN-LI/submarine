@@ -669,6 +669,7 @@ jobs:
           java -version
           chrome --version
       - name: Prepate default mysql-data
+        working-directory: /mnt/submarine
         run: |
           python3 -V
           pip install mysql-connector-python
