@@ -819,5 +819,4 @@ jobs:
           TEST_PROJECTS: ""
         run: |
           pwd
-          lsa
           mvn verify -DskipRat -am -Durl=http://127.0.0.1 -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s -Phadoop-2.9 -B
