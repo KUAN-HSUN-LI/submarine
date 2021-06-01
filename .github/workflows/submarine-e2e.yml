@@ -628,28 +628,28 @@ jobs:
           key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
+      #            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
+      #            ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
           key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
+      #            ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
-            ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
+      #            ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}
       - name: Build
         env:
           BUILD_FLAG: "--batch-mode clean package -Dmaven.javadoc.skip=true -ntp"
@@ -751,10 +751,10 @@ jobs:
         with:
           fetch-depth: 50
           path: submarine
-      - name: Move to /mnt
-        run: |
-          sudo chmod 777 /mnt
-          mv submarine /mnt/
+      # - name: Move to /mnt
+      #   run: |
+      #     sudo chmod 777 /mnt
+      #     mv submarine /mnt/
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -808,15 +808,14 @@ jobs:
           name: submarine-bin
       - name: Untar binaries
         run: |
-          mkdir -p /mnt/submarine/submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-          tar zxvf submarine-dist*.tar.gz -C /mnt/submarine/submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-          mv submarine-dist*.tar.gz /mnt/submarine/submarine-dist/target/
-          sudo chmod -R a+rwX /mnt/submarine/submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+          mkdir -p submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+          tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
+          mv submarine-dist*.tar.gz submarine-dist/target/
+          sudo chmod -R a+rwX submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
       - name: Check space
         run: |
           df -h
       - name: Test
-        working-directory: /mnt/submarine
         env:
           TEST_FLAG: "verify -DskipRat -ntp -am -Durl=http://127.0.0.1"
           TEST_MODULES: "-pl ${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_CLIENT}},:submarine-test-k8s"
