@@ -19,7 +19,7 @@
 
 package org.apache.submarine.server.api.environment;
 
-// import org.apache.submarine.server.api.spec.EnvironmentSpec;
+import org.apache.submarine.server.api.spec.EnvironmentSpec;
 
 public class Environment {
 
