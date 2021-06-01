@@ -21,7 +21,7 @@ env:
   EXCLUDE_SPARK_SECURTITY: "!:submarine-spark-security"
   MOZ_HEADLESS: 1
   PROFILE: "-Phadoop-2.9"
-  BUILD_FLAG: "clean install -ntp -DskipTests"
+  BUILD_FLAG: "clean package -ntp -DskipTests"
   TEST_FLAG: "verify -DskipRat -am -Durl=http://127.0.0.1"
   MODULES: ""
   TEST_MODULES: >-
@@ -492,7 +492,7 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          BUILD_FLAG: "clean install -ntp -DskipTests"
+          BUILD_FLAG: "clean package -ntp -DskipTests"
           MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
           PROFILE: "-Phadoop-2.9"
         run: |
@@ -559,7 +559,7 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          BUILD_FLAG: "clean install -DskipTests -DskipRat -ntp"
+          BUILD_FLAG: "clean package -DskipTests -DskipRat -ntp"
           MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-dist"
           PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
         run: |
@@ -605,7 +605,7 @@ jobs:
           firefox --version
       - name: Maven Build
         env:
-          BUILD_FLAG: "clean install -DskipTests -ntp"
+          BUILD_FLAG: "clean package -DskipTests -ntp"
           MODULES: "-pl org.apache.submarine:submarine-workbench-web"
         run: |
           mvn $BUILD_FLAG $MODULES -B
@@ -672,7 +672,7 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build
         env:
-          BUILD_FLAG: "--batch-mode clean install -Dmaven.javadoc.skip=true -ntp"
+          BUILD_FLAG: "--batch-mode clean package -Dmaven.javadoc.skip=true -ntp"
           MODULES: "-pl :submarine-spark-security"
           PROFILE: "-Pspark-${{matrix.spark-version}} -Pranger-${{matrix.range-version}}"
         run: |
@@ -680,7 +680,7 @@ jobs:
           mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
-          TEST_FLAG: "--batch-mode clean install -Dmaven.javadoc.skip=true -ntp"
+          TEST_FLAG: "--batch-mode clean package -Dmaven.javadoc.skip=true -ntp"
           TEST_MODULES: "-pl :submarine-spark-security"
           PROFILE: "-Pspark-${{matrix.spark-version}} -Pranger--${{matrix.range-version}}"
           TEST_PROJECTS: ""
