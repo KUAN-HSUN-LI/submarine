@@ -54,7 +54,7 @@ public class SubmarineConfVars {
     JDBC_DRIVERCLASSNAME("jdbc.driverClassName", "com.mysql.jdbc.Driver"),
     JDBC_URL("jdbc.url", "jdbc:mysql://127.0.0.1:3306/submarine" +
         "?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&" +
-        "failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&amp;useSSL=false"),
+        "failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&useSSL=false"),
     JDBC_USERNAME("jdbc.username", "submarine"),
     JDBC_PASSWORD("jdbc.password", "password"),
     METASTORE_JDBC_URL("metastore.jdbc.url", "jdbc:mysql://127.0.0.1:3306/metastore" +

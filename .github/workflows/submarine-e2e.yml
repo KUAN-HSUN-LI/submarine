@@ -107,28 +107,28 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-commons-cluster
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-commons-cluster
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-commons-cluster
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-commons-cluster
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-io-
@@ -180,28 +180,28 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-commons-metastore
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-commons-metastore
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-commons-metastore
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-commons-metastore
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-io-
@@ -240,28 +240,28 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-commons-rpc
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-commons-rpc
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-commons-rpc
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-commons-rpc
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-io-
@@ -301,28 +301,28 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-commons-runtime
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-commons-runtime
+            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-commons-runtime
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-commons-runtime
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-commons-runtime
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-io-
@@ -358,34 +358,34 @@ jobs:
         run: |
           mvn --version
           java -version
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/com1
-      #     key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-commons-unixusersync
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
-      #       ${{ runner.os }}-maven-com-
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/org
-      #     key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-commons-unixusersync
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
-      #       ${{ runner.os }}-maven-org-
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/net
-      #     key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-commons-unixusersync
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
-      #       ${{ runner.os }}-maven-net-
-      # - uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2/repository/io
-      #     key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-commons-unixusersync
-      #     restore-keys: |
-      #       ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
-      #       ${{ runner.os }}-maven-io-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/com1
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
+            ${{ runner.os }}-maven-com-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/org
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
+            ${{ runner.os }}-maven-org-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/net
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
+            ${{ runner.os }}-maven-net-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository/io
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
+            ${{ runner.os }}-maven-io-
       - name: Build
         env:
           MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
@@ -404,12 +404,12 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: apache/submarine:database-0.6.0-SNAPSHOT
-        # env:
-        #   MYSQL_ROOT_PASSWORD: "password"
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
         ports:
           - 3306:3306
-        # options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
     steps:
       - uses: actions/checkout@v2
         with:
@@ -432,11 +432,11 @@ jobs:
         run: |
           mvn --version
           java -version
-      # - name: Prepate default mysql-data
-      #   run: |
-      #     python3 -V
-      #     pip install mysql-connector-python
-      #     python3 ./dev-support/database/init-database.py
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          pip install mysql-connector-python
+          python3 ./dev-support/database/init-database.py
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
@@ -756,28 +756,28 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-k8s
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-k8s
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-k8s
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-k8s
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-io-
