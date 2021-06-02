@@ -22,14 +22,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
-import org.apache.submarine.server.response.DictAnnotation;
+import org.apache.submarine.server.response.JsonResponse;
 import org.apache.submarine.server.workbench.rest.CommonDataTest;
 import org.apache.submarine.server.workbench.rest.SysUserRestApi;
-import org.apache.submarine.server.response.JsonResponse;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -54,9 +52,7 @@ public class DictAnnotationTest extends CommonDataTest {
         = (ArrayList<LinkedTreeMap<String, Object>>) linkedTreeMap.get("records");
     System.out.println(arrayList.get(0));
     assertTrue(arrayList.get(0).containsKey("sex"));
-//    assertTrue(arrayList.get(0).containsKey("sex" + DictAnnotation.DICT_SUFFIX));
-//
+
     assertTrue(arrayList.get(0).containsKey("status"));
-//    assertTrue(arrayList.get(0).containsKey("status" + DictAnnotation.DICT_SUFFIX));
   }
 }
