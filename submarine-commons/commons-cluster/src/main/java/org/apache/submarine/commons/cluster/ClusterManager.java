@@ -260,7 +260,7 @@ public abstract class ClusterManager {
               while (!raftInitialized()) {
                 retry++;
                 LOG.info("RaftClient: {}, raftSessionClient: {}", raftClient, raftSessionClient);
-                if (raftSessionClient!=null){
+                if (raftSessionClient != null){
                     LOG.info("{}=={}", raftSessionClient.getState(), PrimitiveState.CONNECTED);
                 }
                 if (0 == retry % 30) {
