@@ -22,6 +22,7 @@ import io.atomix.cluster.Node;
 import io.atomix.cluster.messaging.MessagingConfig;
 import io.atomix.cluster.messaging.MessagingService;
 import io.atomix.cluster.messaging.impl.NettyMessagingService;
+import io.atomix.primitive.PrimitiveState;
 import io.atomix.primitive.operation.OperationType;
 import io.atomix.primitive.operation.PrimitiveOperation;
 import io.atomix.primitive.operation.impl.DefaultOperationId;
@@ -258,10 +259,14 @@ public abstract class ClusterManager {
               int retry = 0;
               while (!raftInitialized()) {
                 retry++;
+                LOG.info("RaftClient: {}, raftSessionClient: {}", raftClient, raftSessionClient);
+                if (raftSessionClient!=null){
+                    LOG.info("{}=={}", raftSessionClient.getState(), PrimitiveState.CONNECTED);
+                }
                 if (0 == retry % 30) {
                   LOG.warn("Raft incomplete initialization! retry[{}]", retry);
                 }
-                Thread.sleep(200);
+                Thread.sleep(100);
               }
               boolean success = false;
               switch (metaEntity.getOperation()) {
