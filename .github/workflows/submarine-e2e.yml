@@ -80,10 +80,10 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: check
         run: |
-          ls ~/.m2/repository/org/
-          ls ~/.m2/repository/org/pentaho/
-          ls ~/.m2/repository/org/pentaho/pentaho-aggdesigner-algorithm
-          ls ~/.m2/repository/org/pentaho/pentaho-aggdesigner-algorithm/5.1.5-jhyde
+          ls /home/runner/.m2/repository/org
+          ls /home/runner/.m2/repository/org/pentaho/
+          ls /home/runner/.m2/repository/org/pentaho/pentaho-aggdesigner-algorithm
+          ls /home/runner/.m2/repository/org/pentaho/pentaho-aggdesigner-algorithm/5.1.5-jhyde
 
   # build:
   #   name: Build
