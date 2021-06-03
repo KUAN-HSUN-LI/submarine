@@ -1,17 +1,57 @@
-name: submarine-k8s
+name: E2E
 
+# Controls when the action will run.
 on: [push]
 
 env:
-  VERSION: "0.6.0-SNAPSHOT"
-  HADOOP_VERSION: "2.9"
+  SUBMARINE: "org.apache.submarine"
+  EXCLUDE_SUBMARINE: "!:submarine-all,!:submarine-client,!:submarine-dist"
   EXCLUDE_SERVER: "!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc"
   EXCLUDE_CLIENT: "!:submarine-client"
+  EXCLUDE_ALL: "!:submarine-all"
+  EXCLUDE_WORKBENCH: "!:submarine-workbench,!:submarine-workbench-web"
+  EXCLUDE_SUBMITTER_K8S: "!:submarine-submitter-k8s"
+  EXCLUDE_SUBMITTER_YARN: "!:submarine-submitter-yarn"
+  EXCLUDE_SUBMITTER: "!:submarine-server-submitter,${EXCLUDE_SUBMITTER_K8S},${EXCLUDE_SUBMITTER_YARN}"
   EXCLUDE_COMMONS: "!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils"
+  EXCLUDE_CLOUD: "!:submarine-cloud"
+  EXCLUDE_DIST: "!:submarine-dist"
+  EXCLUDE_TEST: "!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+  EXCLUDE_SPARK_SECURTITY: "!:submarine-spark-security"
+  MOZ_HEADLESS: 1
 
 jobs:
-  build:
-    name: Build
+  build-database:
+    name: Build Mysql Database
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create default user
+        run: |
+          mysql --version
+          sudo service mysql restart
+          mysql -uroot -proot -e "CREATE USER '$(whoami)'@'localhost';"
+          mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON *.* TO '$(whoami)'@'localhost';"
+      - name: mysql-data
+        run: |
+          ./dev-support/database/init-database.sh
+          ./dev-support/travis/install_external_dependencies.sh
+  setup-protobuf:
+    name: Setup protobuf
+    runs-on: ubuntu-latest
+    env:
+      PROTOBUF_VERSION: "3.10.1"
+      PROTOC_FILENAME: "protoc-3.10.1-linux-x86_64.zip"
+    steps:
+      - run: |
+          echo $PROTOBUF_VERSION $PROTOC_FILENAME
+          pushd /home/runner
+          wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
+          unzip ${PROTOC_FILENAME}
+          bin/protoc --version
+          popd
+  build-submarine:
+    name: Build Submarine
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,14 +59,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: "1.8"
-      # - name: Test
-      #   run: |
-      #     echo "1"
-      #     KUBECTL_BIN="$(command -v kubectl)"
-      #     echo "2"
-      #     if test -x "$KUBECTL_BIN"; then echo "can execute" fi
-      #     echo "3"
-      #     kubectl version
       - name: Set up Maven 3.6.3
         uses: stCarolas/setup-maven@v4
         with:
@@ -60,108 +92,39 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-io-
       - name: Build with Maven
+        env:
+          BUILD_FLAG: "clean package install -DskipTests"
+          MODULES: ""
+          PROFILE: "-Phadoop-2.9"
         run: |
-          export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-          mvn --no-transfer-progress -DskipTests install
-      - name: Store build binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: submarine-bin
-          path: submarine-dist/target/submarine-dist*.tar.gz
-  submarine-k8s:
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+        #  export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
+        #  mvn --no-transfer-progress -DskipTests install
+  test-e2e:
+    name: Test E2E
+    needs: [build-database, setup-protobuf, build-submarine]
     runs-on: ubuntu-latest
-    needs: [build]
-    # services:
-    #   mysql:
-    #     image: mysql:5.7
-    #     env:
-    #       MYSQL_ROOT_PASSWORD: "password"
-    #     ports:
-    #       - 3306:3306
-    #     options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    env:
+      PROFILE: "-Phadoop-2.9"
+      BUILD_FLAG: "clean package install -DskipTests"
+      TEST_FLAG: "verify -DskipRat -am"
+      TEST_MODULES: "-pl org.apache.submarine:submarine-test-e2e"
+      TEST_PROJECTS: ""
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 50
-      - name: Set up Protobuf 3.10.1
-        uses: arduino/setup-protoc@v1
-        with:
-          version: "3.10.1"
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: "1.8"
-      - name: Set up Maven 3.6.3
-        uses: stCarolas/setup-maven@v4
-        with:
-          maven-version: 3.6.3
-      - name: Set up Chrome latest
-        uses: browser-actions/setup-chrome@latest
-      - name: Check version
+      - uses: browser-actions/setup-chrome@latest
+      - run: chrome --version
+      - name: tree
         run: |
-          mvn --version
-          java -version
-          kind version
-          kubectl version
-      - name: Check space
+          sudo apt-get install tree
+          tree /home/runner/work/submarine/submarine/submarine-dist/
+      - name: verify
         run: |
-          df -h
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-com-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-org-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-net-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-io-
-      # - name: Prepate default mysql-data
-      #   run: |
-      #     python3 -V
-      #     pip install mysql-connector-python
-      #     python3 ./dev-support/database/init-database.py
-      - name: Download compiled Submarine binaries
-        uses: actions/download-artifact@v2
-        with:
-          name: submarine-bin
-      - name: Untar binaries
-        run: |
-          mkdir -p submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-          tar zxvf submarine-dist*.tar.gz -C submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-          mv submarine-dist*.tar.gz submarine-dist/target/
-          sudo chmod -R a+rwX submarine-dist/target/submarine-dist-${VERSION}-hadoop-${HADOOP_VERSION}
-      # - name: Build with Maven
-      #   run: |
-      #     export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-      #     mvn --no-transfer-progress -DskipTests package
-      # - name: Test k8s
-      #   run: |
-      #     kubectl version
-      #     which kubectl
-      #     ls -al $(which kubectl)
-      - name: Check space
-        run: |
-          df -h
-      - name: Test
-        env:
-          TEST_FLAG: "verify -DskipRat -ntp -am -Durl=http://127.0.0.1"
-          TEST_MODULES: "-pl ${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_CLIENT}},:submarine-test-k8s"
-          PROFILE: "-Phadoop-2.9"
-          TEST_PROJECTS: ""
-        run: |
-          mvn verify -DskipRat -am -Durl=http://127.0.0.1 -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s -Phadoop-2.9 -B
+          if [[ -n $TEST_MODULES ]]; then echo "MAVEN_OPTS='-Xms1024M -Xmx2048M -XX:MaxPermSize=1024m -XX:-UseGCOverheadLimit \
+          -Dorg.slf4j.simpleLogger.defaultLogLevel=info'" > ~/.mavenrc; fi
+          if [[ -n $TEST_MODULES ]]; then export MODULES="${TEST_MODULES}"; fi
+          echo ">>> mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS"
+          mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
+      - name: test
+        run: mvn $TEST_FLAG $MODULES $PROFILE -B $TEST_PROJECTS
