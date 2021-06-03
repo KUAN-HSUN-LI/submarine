@@ -57,7 +57,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -117,7 +119,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -194,7 +198,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -258,7 +264,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -323,7 +331,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -387,7 +397,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -470,7 +482,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-server
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -544,7 +558,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-submitter-${{matrix.hadoop-version}}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-submitter-${{matrix.hadoop-version}}  
@@ -669,7 +685,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-security-${{matrix.spark-version}}-${{matrix.range-version}}-tmp
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
@@ -806,7 +824,9 @@ jobs:
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository/org
+          path: |
+            ~/.m2/repository/org
+            !~/.m2/repository/org/apache/submarine/
           key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
