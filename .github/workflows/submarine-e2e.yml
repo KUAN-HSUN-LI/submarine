@@ -87,7 +87,7 @@ jobs:
       - name: Build with Maven
         run: |
           export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=1024m  -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN"
-          mvn --no-transfer-progress -DskipTests package
+          mvn clean package install -DskipTests  -Phadoop-2.9 -B
       - name: Store build binary
         uses: actions/upload-artifact@v2
         with:
