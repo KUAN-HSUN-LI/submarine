@@ -47,6 +47,7 @@ public class ClusterClient extends ClusterManager {
 
   @Override
   public boolean raftInitialized() {
+    System.out.println("test");
     LOG.info("raftClient: {}, raftSessionClient: {}", raftClient, raftSessionClient);
     if (null != raftSessionClient){
       LOG.info("{}=={}", raftSessionClient.getState(), PrimitiveState.CONNECTED);
