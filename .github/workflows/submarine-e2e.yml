@@ -74,7 +74,7 @@ jobs:
             ${{ runner.os }}-maven-io-
       - name: Build with Maven
         env:
-          BUILD_FLAG: "clean package install -DskipTests"
+          BUILD_FLAG: "clean package -DskipTests"
           MODULES: ""
           PROFILE: "-Phadoop-2.9"
         run: |
@@ -549,7 +549,7 @@ jobs:
           rm -rf ~/.m2/repository/org/apache/submarine/
       - name: Build
         env:
-          BUILD_FLAG: "clean package install -DskipTests -DskipRat -ntp"
+          BUILD_FLAG: "clean install -DskipTests -DskipRat -ntp"
           MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-dist"
           PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
         run: |
