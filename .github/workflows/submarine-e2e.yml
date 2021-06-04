@@ -179,7 +179,7 @@ jobs:
       - name: Prepate default mysql-data
         run: |
           python3 -V
-          pip3 install mysql-connector
+          conda install -c anaconda mysql-connector-python
           python3 ./dev-support/database/init-database.py
       - uses: actions/cache@v1
         with:
