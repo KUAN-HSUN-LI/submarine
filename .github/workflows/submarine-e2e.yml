@@ -412,7 +412,7 @@ jobs:
           rm -rf ~/.m2/repository/org/apache/submarine/
         if: always()
   Submarine-server:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     services:
       mysql:
         image: mysql:5.7
