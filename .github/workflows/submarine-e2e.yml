@@ -817,7 +817,7 @@ jobs:
           PROFILE: "-Phadoop-2.9"
           TEST_PROJECTS: ""
         run: |
-          mvn verify -DskipRat -am -Durl=http://127.0.0.1 -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s -Phadoop-2.9 -B
+          mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B 
       - name: Delete temporary build artifacts before caching
         run: |
           #Never cache local artifacts
