@@ -483,7 +483,7 @@ jobs:
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am"
-          TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
+          TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
           PROFILE: "-Phadoop-2.9"
           TEST_PROJECTS: ""
         run: |
