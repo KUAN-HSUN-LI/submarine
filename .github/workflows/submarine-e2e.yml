@@ -412,7 +412,7 @@ jobs:
           rm -rf ~/.m2/repository/org/apache/submarine/
         if: always()
   Submarine-server:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     services:
       mysql:
         image: mysql:5.7
@@ -541,12 +541,6 @@ jobs:
           key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-submitter-${{matrix.hadoop-version}}
           restore-keys: |
             ${{ runner.os }}-maven-io-
-      - name: check cache
-        run: |
-          ls ~/.m2/repository/org
-          echo "apache"
-          ls ~/.m2/repository/org/apache
-          rm -rf ~/.m2/repository/org/apache/submarine/
       - name: Build
         env:
           BUILD_FLAG: "clean install -DskipTests -DskipRat -ntp"
