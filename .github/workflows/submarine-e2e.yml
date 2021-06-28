@@ -51,25 +51,25 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
             ${{ runner.os }}-maven-io-
       - name: Build with Maven
@@ -184,30 +184,26 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/com1
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
-            ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-com-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
-            ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-org-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
-            ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-net-
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
           restore-keys: |
-            ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}-build
             ${{ runner.os }}-maven-io-
       - name: Download compiled Submarine binaries
         uses: actions/download-artifact@v2
