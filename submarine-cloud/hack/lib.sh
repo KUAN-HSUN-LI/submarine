@@ -47,22 +47,22 @@ function hack::ensure_kubectl() {
         return 0
     fi
 
-    orig_kubectl_bin="$KUBECTL_BIN"
-    if command -v kubectl > /dev/null; then
-        KUBECTL_BIN="$(command -v kubectl)"
-        if hack::verify_kubectl; then
-            ln -sf "$KUBECTL_BIN" "$orig_kubectl_bin"
-            KUBECTL_BIN="$orig_kubectl_bin"
-            echo $KUBECTL_BIN
-            return 0
-        fi
-    fi
+    # orig_kubectl_bin="$KUBECTL_BIN"
+    # if command -v kubectl > /dev/null; then
+    #     KUBECTL_BIN="$(command -v kubectl)"
+    #     if hack::verify_kubectl; then
+    #         ln -sf "$KUBECTL_BIN" "$orig_kubectl_bin"
+    #         KUBECTL_BIN="$orig_kubectl_bin"
+    #         echo $KUBECTL_BIN
+    #         return 0
+    #     fi
+    # fi
 
     echo "Installing kubectl v$KUBECTL_VERSION..."
     tmpfile=$(mktemp)
     trap "test -f $tmpfile && rm $tmpfile" RETURN
     curl --retry 10 -L -o $tmpfile https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl
-    sudo mv $tmpfile $KUBECTL_BIN
+    mv $tmpfile $KUBECTL_BIN
     chmod +x $KUBECTL_BIN
 }
 
@@ -79,22 +79,22 @@ function hack::ensure_kind() {
         return 0
     fi
 
-    orig_kind_bin="$KIND_BIN"
-    if command -v kind > /dev/null; then
-        KIND_BIN="$(command -v kind)"
-        if hack::verify_kind; then
-            ln -sf "$KIND_BIN" "$orig_kind_bin"
-            KIND_BIN="$orig_kind_bin"
-            echo $KIND_BIN
-            return 0
-        fi
-    fi
+    # orig_kind_bin="$KIND_BIN"
+    # if command -v kind > /dev/null; then
+    #     KIND_BIN="$(command -v kind)"
+    #     if hack::verify_kind; then
+    #         ln -sf "$KIND_BIN" "$orig_kind_bin"
+    #         KIND_BIN="$orig_kind_bin"
+    #         echo $KIND_BIN
+    #         return 0
+    #     fi
+    # fi
 
     echo "Installing kind v$KIND_VERSION..."
     tmpfile=$(mktemp)
     trap "test -f $tmpfile && rm $tmpfile" RETURN
     curl --retry 10 -L -o $tmpfile https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-$(uname)-amd64
-    sudo mv $tmpfile $KIND_BIN
+    mv $tmpfile $KIND_BIN
     chmod +x $KIND_BIN
 }
 
