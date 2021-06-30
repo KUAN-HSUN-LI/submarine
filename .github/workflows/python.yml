@@ -122,6 +122,15 @@ jobs:
       - name: Build Image locally
         run: |
           .github/scripts/build-image-locally.sh
+      - uses: azure/setup-helm@v1
+        with:
+          version: 3.6.0
+          token:
+            description: "Github token"
+            default: ${{ github.token }}
+      - name: Check version
+        run: |
+          helm version
       - name: Start submarine
         run: |
           # Fix submarine-database start failed in kind. https://github.com/kubernetes/minikube/issues/7906
