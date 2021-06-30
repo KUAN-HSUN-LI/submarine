@@ -264,10 +264,10 @@ public abstract class ClusterManager {
                 if (raftSessionClient != null){
                     LOG.info("{}=={}", raftSessionClient.getState(), PrimitiveState.CONNECTED);
                 }
-                if (0 == retry % 10) {
+                if (0 == retry % 30) {
                   LOG.warn("Raft incomplete initialization! retry[{}]", retry);
                 }
-                Thread.sleep(1000);
+                Thread.sleep(500);
               }
               boolean success = false;
               switch (metaEntity.getOperation()) {
@@ -286,7 +286,7 @@ public abstract class ClusterManager {
                 LOG.error("Cluster Meta Consume failed!");
               }
             } else {
-              Thread.sleep(1000);
+              Thread.sleep(500);
             }
           }
         } catch (InterruptedException e) {
