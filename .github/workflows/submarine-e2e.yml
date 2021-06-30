@@ -192,13 +192,18 @@ jobs:
           echo "environment-kubeconfig:" ${KUBECONFIG}
           export KUBECONFIG=~/.kube/kind-config-kind
           kind export kubeconfig --kubeconfig ${KUBECONFIG}
-      - name: Start submarine
+      - name: Fix submarine-database start failed in kind
         run: |
           # Fix submarine-database start failed in kind. https://github.com/kubernetes/minikube/issues/7906
           sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+      - name: Start submarine
+        run: |
           echo "helm install"
           helm install --wait submarine ./helm-charts/submarine
+          echo "helm install finish"
           kubectl get pods
           kubectl port-forward svc/submarine-database 3306:3306 &
           kubectl port-forward svc/submarine-server 8080:8080 &
