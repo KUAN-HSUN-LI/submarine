@@ -11,7 +11,7 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
-          java-version: '1.8'
+          java-version: "1.8"
       - name: Set up Maven 3.6.3
         uses: stCarolas/setup-maven@v4
         with:
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
-          java-version: '1.8'
+          java-version: "1.8"
       - run: mvn org.apache.rat:apache-rat-plugin:check
 
   linter:
@@ -67,7 +67,7 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
-          java-version: '1.8'
+          java-version: "1.8"
       - name: Set up Maven 3.6.3
         uses: stCarolas/setup-maven@v4
         with:
@@ -106,3 +106,57 @@ jobs:
         run: ./dev-support/style-check/lint-scala.sh
       - name: Angular Style
         run: ./dev-support/style-check/lint-angular.sh
+  Submarine-server:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 10s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: "1.8"
+      - name: Set up Maven 3.6.3
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.6.3
+      - name: Set up Chrome latest
+        uses: browser-actions/setup-chrome@latest
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+      - name: Prepate default mysql-data
+        run: |
+          python3 -V
+          sudo apt-get install python3-mysql.connector
+          python3 ./dev-support/database/init-database.py
+      - name: Build
+        env:
+          BUILD_FLAG: "clean install -ntp -DskipTests"
+          MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+          PROFILE: "-Phadoop-2.9"
+        run: |
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
+      - name: Test
+        env:
+          TEST_FLAG: "test -DskipRat -am"
+          TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
+          PROFILE: "-Phadoop-2.9"
+          TEST_PROJECTS: ""
+        run: |
+          echo ">>> mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B"
+          mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine/
