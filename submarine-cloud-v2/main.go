@@ -19,16 +19,20 @@ package main
 
 import (
 	"flag"
-	"time"
-	kubeinformers "k8s.io/client-go/informers"
-	"k8s.io/klog/v2"
-	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"os"
-	"submarine-cloud-v2/pkg/signals"
 	clientset "submarine-cloud-v2/pkg/generated/clientset/versioned"
 	informers "submarine-cloud-v2/pkg/generated/informers/externalversions"
+	"submarine-cloud-v2/pkg/signals"
+	"time"
+
+	kubeinformers "k8s.io/client-go/informers"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/klog/v2"
+
+	traefikclientset "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/generated/clientset/versioned"
+	traefikinformers "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/generated/informers/externalversions"
 )
 
 var (
@@ -52,7 +56,7 @@ func main() {
 	stopCh := signals.SetupSignalHandler()
 
 	cfg, err := initKubeConfig()
-	
+
 	if err != nil {
 		klog.Fatalf("Error building kubeconfig: %s", err.Error())
 	}
@@ -67,30 +71,46 @@ func main() {
 		klog.Fatalf("Error building submarine clientset: %s", err.Error())
 	}
 
+	traefikClient, err := traefikclientset.NewForConfig(cfg)
+	if err != nil {
+		klog.Fatalf("Error building traefik clientset: %s", err.Error())
+	}
+
 	kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, time.Second*30)
 	submarineInformerFactory := informers.NewSharedInformerFactory(submarineClient, time.Second*30)
-	
+	traefikInformerFactory := traefikinformers.NewSharedInformerFactory(traefikClient, time.Second*30)
+
 	// TODO: Pass informers to NewController()
 	//       ex: namespace informer
 
 	// Create a Submarine operator
-	controller := NewController(kubeClient, submarineClient,
+	controller := NewController(incluster, kubeClient, submarineClient, traefikClient,
+		kubeInformerFactory.Core().V1().Namespaces(),
 		kubeInformerFactory.Apps().V1().Deployments(),
+		kubeInformerFactory.Core().V1().Services(),
+		kubeInformerFactory.Core().V1().ServiceAccounts(),
+		kubeInformerFactory.Core().V1().PersistentVolumes(),
+		kubeInformerFactory.Core().V1().PersistentVolumeClaims(),
+		kubeInformerFactory.Extensions().V1beta1().Ingresses(),
+		traefikInformerFactory.Traefik().V1alpha1().IngressRoutes(),
+		kubeInformerFactory.Rbac().V1().ClusterRoles(),
+		kubeInformerFactory.Rbac().V1().ClusterRoleBindings(),
 		submarineInformerFactory.Submarine().V1alpha1().Submarines())
 
 	// notice that there is no need to run Start methods in a separate goroutine. (i.e. go kubeInformerFactory.Start(stopCh)
 	// Start method is non-blocking and runs all registered informers in a dedicated goroutine.
 	kubeInformerFactory.Start(stopCh)
 	submarineInformerFactory.Start(stopCh)
+	traefikInformerFactory.Start(stopCh)
 
 	// Run controller
-	if err = controller.Run(2, stopCh); err != nil {
+	if err = controller.Run(1, stopCh); err != nil {
 		klog.Fatalf("Error running controller: %s", err.Error())
 	}
 }
 
 func init() {
 	flag.BoolVar(&incluster, "incluster", false, "Run submarine-operator in-cluster")
-	flag.StringVar(&kubeconfig, "kubeconfig", os.Getenv("HOME") + "/.kube/config", "Path to a kubeconfig. Only required if out-of-cluster.")
+	flag.StringVar(&kubeconfig, "kubeconfig", os.Getenv("HOME")+"/.kube/config", "Path to a kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&masterURL, "master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
 }

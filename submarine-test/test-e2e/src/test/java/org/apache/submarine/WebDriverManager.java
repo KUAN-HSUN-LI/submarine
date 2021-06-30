@@ -19,6 +19,7 @@ package org.apache.submarine;
 
 import static org.junit.Assert.fail;
 
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -34,7 +35,7 @@ public class WebDriverManager {
 
   public final static Logger LOG = LoggerFactory.getLogger(WebDriverManager.class);
 
-  private static String downLoadsDir = "";
+  private static String downloadPath = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "downloads").toString();
 
   private static boolean webDriverIsDownloaded = false;
 
@@ -65,14 +66,27 @@ public class WebDriverManager {
     String url;
     if (System.getenv("url") != null) {
       url = System.getenv("url");
+    } else if ((System.getProperty("SUBMARINE_WORKBENCH_URL") != null) || (System.getProperty("SUBMARINE_WORKBENCH_PORT") == null)) {
+      if (System.getProperty("SUBMARINE_WORKBENCH_URL") == null) {
+        url = "http://127.0.0.1";
+      } else {
+        url = System.getProperty("SUBMARINE_WORKBENCH_URL"); 
+      }
+
+      url = url.concat(":");
+
+      if (System.getProperty("SUBMARINE_WORKBENCH_PORT") == null) {
+        url = url.concat("8080");      
+      } else {
+        String port = System.getProperty("SUBMARINE_WORKBENCH_PORT");
+        url = url.concat(String.valueOf(port));
+      }
     } else {
-      url = "http://localhost:8080";
+      url = "http://127.0.0.1:8080";
     }
 
     long start = System.currentTimeMillis();
     boolean loaded = false;
-    driver.manage().timeouts().implicitlyWait(AbstractSubmarineIT.MAX_IMPLICIT_WAIT,
-        TimeUnit.SECONDS);
     driver.get(url);
 
     while (System.currentTimeMillis() - start < 60 * 1000) {
@@ -102,6 +116,10 @@ public class WebDriverManager {
     return driver;
   }
 
+  public static String getDownloadPath() {
+      return downloadPath;
+  }
+
   private static WebDriver generateWebDriver(WebDriverProvider provide) {
     if (!webDriverIsDownloaded) {
       String webDriverVersion = provide.getWebDriverVersion();
@@ -110,7 +128,7 @@ public class WebDriverManager {
         webDriverIsDownloaded = true;
       }
     }
-    WebDriver driver = provide.createWebDriver(webDriverPath);
+    WebDriver driver = provide.createWebDriver(webDriverPath, downloadPath);
     return driver;
   }
 }

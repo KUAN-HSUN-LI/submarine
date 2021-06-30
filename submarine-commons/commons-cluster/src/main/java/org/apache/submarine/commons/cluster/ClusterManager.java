@@ -22,6 +22,7 @@ import io.atomix.cluster.Node;
 import io.atomix.cluster.messaging.MessagingConfig;
 import io.atomix.cluster.messaging.MessagingService;
 import io.atomix.cluster.messaging.impl.NettyMessagingService;
+import io.atomix.primitive.PrimitiveState;
 import io.atomix.primitive.operation.OperationType;
 import io.atomix.primitive.operation.PrimitiveOperation;
 import io.atomix.primitive.operation.impl.DefaultOperationId;
@@ -231,14 +232,15 @@ public abstract class ClusterManager {
             MESSAGING_SERVICE_NAME, address, new MessagingConfig()).start().join();
         RaftClientProtocol protocol = new RaftClientMessagingProtocol(
             messagingManager, protocolSerializer, raftAddressMap::get);
-
+        LOG.info("RaftClientThread building {}:{}", serverHost, raftClientPort);
         raftClient = RaftClient.builder()
             .withMemberId(memberId)
             .withPartitionId(PartitionId.from("partition", 1))
             .withProtocol(protocol)
             .build();
-
+        LOG.info("RaftClientThread connect");
         raftClient.connect(clusterMemberIds).join();
+        LOG.info("RaftClientThread createProxy");
 
         raftSessionClient = createProxy(raftClient);
 
@@ -258,10 +260,14 @@ public abstract class ClusterManager {
               int retry = 0;
               while (!raftInitialized()) {
                 retry++;
+                LOG.info("RaftClient: {}, raftSessionClient: {}", raftClient, raftSessionClient);
+                if (raftSessionClient != null){
+                    LOG.info("{}=={}", raftSessionClient.getState(), PrimitiveState.CONNECTED);
+                }
                 if (0 == retry % 30) {
                   LOG.warn("Raft incomplete initialization! retry[{}]", retry);
                 }
-                Thread.sleep(100);
+                Thread.sleep(500);
               }
               boolean success = false;
               switch (metaEntity.getOperation()) {
@@ -280,7 +286,7 @@ public abstract class ClusterManager {
                 LOG.error("Cluster Meta Consume failed!");
               }
             } else {
-              Thread.sleep(100);
+              Thread.sleep(500);
             }
           }
         } catch (InterruptedException e) {

@@ -47,8 +47,13 @@ public class ClusterClient extends ClusterManager {
 
   @Override
   public boolean raftInitialized() {
+    System.out.println("test");
+    LOG.info("raftClient: {}, raftSessionClient: {}", raftClient, raftSessionClient);
+    if (null != raftSessionClient){
+      LOG.info("{}=={}", raftSessionClient.getState(), PrimitiveState.CONNECTED);
+    }
     if (null != raftClient && null != raftSessionClient
-        && raftSessionClient.getState() == PrimitiveState.CONNECTED) {
+          && raftSessionClient.getState() == PrimitiveState.CONNECTED) {
       return true;
     }
 
@@ -62,7 +67,7 @@ public class ClusterClient extends ClusterManager {
 
   // In the ClusterClient metaKey equal interpreterGroupId
   public void start(String metaKey) {
-    LOG.info("ClusterClient::start({})", metaKey);
+    LOG.info("ClusterClient::start123({})", metaKey);
     if (!sconf.isClusterMode()) {
       return;
     }

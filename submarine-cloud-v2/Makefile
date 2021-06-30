@@ -15,12 +15,25 @@
 # limitations under the License.
 #
 
+all: # The default target
+
+charts:
+	cp -r ../helm-charts/submarine/charts  .
+
+.PHONY: all
+all: charts
+	go build -o submarine-operator
+
+.PHONY: api
+api:
+	@cd hack; echo "Generating API..."; ./update-codegen.sh; \
+		echo "Verifying API..."; ./verify-codegen.sh
+
 .PHONY: image
-image:
+image: charts
 	GOOS=linux go build -o submarine-operator
 	docker build -t submarine-operator .
 	go build -o submarine-operator
-	touch $@
 
 .PHONY: test-unit
 test-unit:

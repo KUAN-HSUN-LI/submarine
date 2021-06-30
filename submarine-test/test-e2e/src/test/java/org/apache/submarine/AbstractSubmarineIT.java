@@ -55,53 +55,6 @@ abstract public class AbstractSubmarineIT {
   protected static final long MAX_BROWSER_TIMEOUT_SEC = 60;
   protected static final long MAX_PARAGRAPH_TIMEOUT_SEC = 120;
 
-  protected void setTextOfParagraph(int paragraphNo, String text) {
-    String editorId = driver.findElement(By.xpath(getParagraphXPath(paragraphNo) + "//div[contains(@class, 'editor')]")).getAttribute("id");
-    if (driver instanceof JavascriptExecutor) {
-      ((JavascriptExecutor) driver).executeScript("ace.edit('" + editorId + "'). setValue('" + text + "')");
-    } else {
-      throw new IllegalStateException("This driver does not support JavaScript!");
-    }
-  }
-
-  protected void runParagraph(int paragraphNo) {
-    By by = By.xpath(getParagraphXPath(paragraphNo) + "//span[@class='icon-control-play']");
-    pollingWait(by, 5);
-    driver.findElement(by).click();
-  }
-
-
-  protected String getParagraphXPath(int paragraphNo) {
-    return "(//div[@ng-controller=\"ParagraphCtrl\"])[" + paragraphNo + "]";
-  }
-
-  protected String getNoteFormsXPath() {
-    return "(//div[@id='noteForms'])";
-  }
-
-  protected boolean waitForParagraph(final int paragraphNo, final String state) {
-    By locator = By.xpath(getParagraphXPath(paragraphNo)
-        + "//div[contains(@class, 'control')]//span[2][contains(.,'" + state + "')]");
-    WebElement element = pollingWait(locator, MAX_PARAGRAPH_TIMEOUT_SEC);
-    return element.isDisplayed();
-  }
-
-  protected String getParagraphStatus(final int paragraphNo) {
-    By locator = By.xpath(getParagraphXPath(paragraphNo)
-        + "//div[contains(@class, 'control')]/span[2]");
-
-    return driver.findElement(locator).getText();
-  }
-
-  protected boolean waitForText(final String txt, final By locator) {
-    try {
-      WebElement element = pollingWait(locator, MAX_BROWSER_TIMEOUT_SEC);
-      return txt.equals(element.getText());
-    } catch (TimeoutException e) {
-      return false;
-    }
-  }
-
   protected WebElement pollingWait(final By locator, final long timeWait) {
     Wait<WebDriver> wait = new FluentWait<>(driver)
         .withTimeout(timeWait, TimeUnit.SECONDS)
@@ -115,12 +68,69 @@ abstract public class AbstractSubmarineIT {
     });
   }
 
+  protected String getURL(final String defaultURL, final int defaultPort) {
+    String URL;
+    if (System.getProperty("SUBMARINE_WORKBENCH_URL") == null) {
+      URL = defaultURL;
+    } else {
+      URL = System.getProperty("SUBMARINE_WORKBENCH_URL"); 
+    }
+
+    URL = URL.concat(":");
+
+    if (System.getProperty("SUBMARINE_WORKBENCH_PORT") == null) {
+      URL = URL.concat(String.valueOf(defaultPort));      
+    } else {
+      String port = System.getProperty("SUBMARINE_WORKBENCH_PORT");
+      URL = URL.concat(String.valueOf(port));
+    }
+    return URL;
+  }
+
+  protected void Login() {
+    String username = "admin";
+    String password = "admin";
+    waitToPresent(By.cssSelector("input[ng-reflect-name='userName']"), MAX_BROWSER_TIMEOUT_SEC).sendKeys(username);
+    waitToPresent(By.cssSelector("input[ng-reflect-name='password']"), MAX_BROWSER_TIMEOUT_SEC).sendKeys(password);
+    Click(By.cssSelector("button[class='login-form-button ant-btn ant-btn-primary']"), MAX_BROWSER_TIMEOUT_SEC);
+    waitToPresent(By.cssSelector("a[routerlink='/workbench/experiment']"), MAX_BROWSER_TIMEOUT_SEC);
+  }
+
   protected WebElement buttonCheck(final By locator, final long timeWait) {
-    Wait<WebDriver> wait = new FluentWait<>(driver)
-        .withTimeout(timeWait, TimeUnit.SECONDS)
-        .pollingEvery(1, TimeUnit.SECONDS)
-        .ignoring(NoSuchElementException.class);
-    return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    return new WebDriverWait(driver, timeWait)
+            .until(ExpectedConditions.elementToBeClickable(locator));
+  }
+
+  protected WebElement waitToPresent(final By locator, final long timeWait) {
+    return new WebDriverWait(driver, timeWait)
+              .until(ExpectedConditions.presenceOfElementLocated(locator));
+  }
+
+  protected void waitURL(String URL, final long timeWait) {
+    new WebDriverWait(driver, timeWait).until(ExpectedConditions.urlToBe​(URL)); 
+  }
+
+  protected void waitVisibility(WebElement element, final long timeWait) {
+    new WebDriverWait(driver, timeWait).until(ExpectedConditions.visibilityOf(element));
+  }
+
+  protected WebElement SendKeys(final By locator, final long timeWait, String content) {
+    WebElement input = waitToPresent(locator, timeWait);
+    waitVisibility(input, timeWait);
+    input.sendKeys(content);
+    return input;
+  }
+
+  protected WebElement Click(final By locator, final long timeWait) {
+    WebElement button = buttonCheck(locator, timeWait);
+    button.click();
+    return button;
+  }
+
+  protected WebElement ClickAndNavigate(final By locator, final long timeWait, String URL) {
+    WebElement button = Click(locator, timeWait);
+    waitURL(URL, timeWait);
+    return button;
   }
 
   protected void takeScreenShot(final String path) {
@@ -130,36 +140,6 @@ abstract public class AbstractSubmarineIT {
     } catch (java.io.IOException e) {
       e.fillInStackTrace();
     }
-  }
-
-  protected void createNewNote() {
-    clickAndWait(By.xpath("//div[contains(@class, \"col-md-4\")]/div/h5/a[contains(.,'Create new" +
-        " note')]"));
-
-    WebDriverWait block = new WebDriverWait(driver, MAX_BROWSER_TIMEOUT_SEC);
-    block.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteCreateModal")));
-    clickAndWait(By.id("createNoteButton"));
-    block.until(ExpectedConditions.invisibilityOfElementLocated(By.id("createNoteButton")));
-  }
-
-  protected void deleteTestNotebook(final WebDriver driver) {
-    WebDriverWait block = new WebDriverWait(driver, MAX_BROWSER_TIMEOUT_SEC);
-    driver.findElement(By.xpath(".//*[@id='main']//button[@ng-click='moveNoteToTrash(note.id)']"))
-        .sendKeys(Keys.ENTER);
-    block.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='main']//button[@ng-click='moveNoteToTrash(note.id)']")));
-    driver.findElement(By.xpath("//div[@class='modal-dialog'][contains(.,'This note will be moved to trash')]" +
-        "//div[@class='modal-footer']//button[contains(.,'OK')]")).click();
-    SubmarineITUtils.sleep(100, false);
-  }
-
-  protected void deleteTrashNotebook(final WebDriver driver) {
-    WebDriverWait block = new WebDriverWait(driver, MAX_BROWSER_TIMEOUT_SEC);
-    driver.findElement(By.xpath(".//*[@id='main']//button[@ng-click='removeNote(note.id)']"))
-        .sendKeys(Keys.ENTER);
-    block.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='main']//button[@ng-click='removeNote(note.id)']")));
-    driver.findElement(By.xpath("//div[@class='modal-dialog'][contains(.,'This cannot be undone. Are you sure?')]" +
-        "//div[@class='modal-footer']//button[contains(.,'OK')]")).click();
-    SubmarineITUtils.sleep(100, false);
   }
 
   protected void clickAndWait(final By locator) {

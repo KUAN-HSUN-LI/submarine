@@ -77,13 +77,13 @@ public class SubmarineServerClusterTest extends AbstractSubmarineServerTest {
 
     // Waiting for cluster startup
     int wait = 0;
-    while (wait++ < 100) {
+    while (wait++ < 10) {
       if (clusterClient.raftInitialized()) {
         LOG.info("SubmarineServerClusterTest::start {}(ms) found cluster leader", wait * 3000);
         break;
       }
 
-      sleep(3000);
+      sleep(10000);
     }
 
     assertTrue("Can not start Submarine server!", clusterClient.raftInitialized());
