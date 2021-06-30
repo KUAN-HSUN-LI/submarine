@@ -191,7 +191,7 @@ jobs:
           echo "current-context:" $(kubectl config current-context)
           echo "environment-kubeconfig:" ${KUBECONFIG}
           export KUBECONFIG=~/.kube/kind-config-kind
-          export kubeconfig --kubeconfig ${KUBECONFIG}
+          kind export kubeconfig --kubeconfig ${KUBECONFIG}
       - name: Start submarine
         run: |
           # Fix submarine-database start failed in kind. https://github.com/kubernetes/minikube/issues/7906
