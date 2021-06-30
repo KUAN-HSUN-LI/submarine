@@ -232,7 +232,7 @@ public abstract class ClusterManager {
             MESSAGING_SERVICE_NAME, address, new MessagingConfig()).start().join();
         RaftClientProtocol protocol = new RaftClientMessagingProtocol(
             messagingManager, protocolSerializer, raftAddressMap::get);
-
+        LOG.info("RaftClientThread building {}:{}", serverHost, raftClientPort);
         raftClient = RaftClient.builder()
             .withMemberId(memberId)
             .withPartitionId(PartitionId.from("partition", 1))

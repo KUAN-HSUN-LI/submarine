@@ -97,7 +97,6 @@ usage() {
     cat <<EOF
 This script use kind to create Submarine cluster, about kind please refer: https://kind.sigs.k8s.io/
 * This script will automatically install kubectr-${KUBECTL_VERSION} and kind-${KIND_VERSION} in ${OUTPUT_BIN}
-
 Options:
        -d,--database           ip/service of submarine database, default value: submarine-database
        -u,--uninstall          uninstall submarine cluster

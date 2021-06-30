@@ -54,8 +54,11 @@ public class DictAnnotation {
   private BeanMap beanMap = null;
 
   public DictAnnotation(Map propertyMap) {
+    LOG.info(propertyMap.toString());
     this.object = generateBean(propertyMap);
+    LOG.info("bean map start");
     this.beanMap = BeanMap.create(this.object);
+    LOG.info("what");
   }
 
   private Object generateBean(Map mapProperty) {
@@ -64,8 +67,10 @@ public class DictAnnotation {
     Set keySet = mapProperty.keySet();
     for (Iterator<String> it = keySet.iterator(); it.hasNext(); ) {
       String key = it.next();
+      LOG.info("key: " + key);
       generator.addProperty(key, (Class) mapProperty.get(key));
     }
+    LOG.info("generator: " + generator );
     return generator.create();
   }
 
@@ -114,6 +119,7 @@ public class DictAnnotation {
         mapFieldAndType.put(propertyName, descriptor.getPropertyType());
 
         if (mapDictItems.containsKey(propertyName)) {
+          LOG.info("in " + propertyName);
           // add new dict text field to object
           mapFieldAndType.put(propertyName + DICT_SUFFIX, String.class);
 
@@ -127,16 +133,22 @@ public class DictAnnotation {
         }
       }
     }
-
+    LOG.info("???" + mapFieldAndType.toString());
     // Map to entity object
     DictAnnotation bean = new DictAnnotation(mapFieldAndType);
+    LOG.info("???1");
     Set<String> keys = mapFieldAndType.keySet();
+    LOG.info("???2");
+
     for (Iterator<String> it = keys.iterator(); it.hasNext(); ) {
       String key = it.next();
+      LOG.info("???3");
       bean.setValue(key, mapFieldValues.get(key));
     }
+    LOG.info("???4");
 
     Object newObj = bean.getObject();
+    LOG.info("return");
     return newObj;
   }
 
@@ -173,6 +185,7 @@ public class DictAnnotation {
         Object newObj = mergeDictText(record, mapDictItems);
         dicts.add(newObj);
       }
+      LOG.info("parse " + dicts.toString());
       listResult.setRecords(dicts);
 
       return true;

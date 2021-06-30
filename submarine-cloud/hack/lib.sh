@@ -81,8 +81,11 @@ function hack::ensure_kind() {
         return 0
     fi
 
+<<<<<<< HEAD
     # Use the locally installed kind(0.7.0).
     # Because of the development, we are using a specific version of kubectl now.
+=======
+>>>>>>> mysql-action
     # orig_kind_bin="$KIND_BIN"
     # if command -v kind > /dev/null; then
     #     KIND_BIN="$(command -v kind)"
