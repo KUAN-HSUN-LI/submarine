@@ -19,7 +19,6 @@ env:
   EXCLUDE_DIST: "!:submarine-dist"
   EXCLUDE_TEST: "!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
   EXCLUDE_SPARK_SECURTITY: "!:submarine-spark-security"
-  MOZ_HEADLESS: 1
   PROFILE: "-Phadoop-2.9"
   BUILD_FLAG: "clean install -DskipTests"
   TEST_FLAG: "verify -DskipRat -am -Durl=http://127.0.0.1"
@@ -157,6 +156,51 @@ jobs:
         uses: stCarolas/setup-maven@v4
         with:
           maven-version: 3.6.3
+      - name: Create the kind config
+        run: |
+          cat <<EOF > ./kind-config-kind.yaml
+          kind: Cluster
+          apiVersion: kind.x-k8s.io/v1alpha4
+          nodes:
+          - role: control-plane
+            kubeadmConfigPatches:
+            - |
+              kind: InitConfiguration
+              nodeRegistration:
+                kubeletExtraArgs:
+                  node-labels: "ingress-ready=true"
+                  authorization-mode: "AlwaysAllow"
+            extraPortMappings:
+            - containerPort: 32080
+              hostPort: 80
+              protocol: TCP
+            - containerPort: 443
+              hostPort: 443
+              protocol: TCP
+          EOF
+      - uses: container-tools/kind-action@v1
+        with:
+          version: "v0.9.0"
+          node_image: kindest/node:v1.15.11
+          config: ./kind-config-kind.yaml
+      - name: Show K8s cluster information
+        run: |
+          kubectl cluster-info
+          kubectl version
+          kubectl get pods -n kube-system
+          echo "current-context:" $(kubectl config current-context)
+          echo "environment-kubeconfig:" ${KUBECONFIG}
+      - name: Start submarine
+        run: |
+          # Fix submarine-database start failed in kind. https://github.com/kubernetes/minikube/issues/7906
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+          helm install --wait submarine ./helm-charts/submarine
+          kubectl get pods
+          kubectl port-forward svc/submarine-database 3306:3306 &
+          kubectl port-forward svc/submarine-server 8080:8080 &
+          kubectl port-forward svc/submarine-minio-service 9000:9000 &
+          kubectl port-forward svc/submarine-mlflow-service 5001:5000 &
       - name: Check version
         run: |
           mvn --version
@@ -185,11 +229,6 @@ jobs:
           TEST_PROJECTS: ""
         run: |
           mvn verify -DskipRat -am -Durl=http://127.0.0.1 -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s -Phadoop-2.9 -B
-      - name: Delete temporary build artifacts before caching
-        run: |
-          #Never cache local artifacts
-          rm -rf ~/.m2/repository/org/apache/submarine/
-        if: always()
   Submarine-commons-cluster:
     runs-on: ubuntu-latest
     steps:
