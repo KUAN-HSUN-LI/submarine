@@ -202,7 +202,7 @@ jobs:
       - name: Start submarine
         run: |
           echo "helm install"
-          helm install --wait submarine ./helm-charts/submarine
+          helm install --wait --timeout 20 submarine ./helm-charts/submarine
           echo "helm install finish"
           kubectl get pods
           kubectl port-forward svc/submarine-database 3306:3306 &

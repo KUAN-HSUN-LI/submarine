@@ -43,7 +43,7 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
-          java-version: '1.8'
+          java-version: "1.8"
       - name: Set up Maven 3.6.3
         uses: stCarolas/setup-maven@v4
         with:
@@ -127,7 +127,7 @@ jobs:
           # Fix submarine-database start failed in kind. https://github.com/kubernetes/minikube/issues/7906
           sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
-          helm install --wait submarine ./helm-charts/submarine
+          helm install --wait --timeout 20 submarine ./helm-charts/submarine
           kubectl get pods
           kubectl port-forward svc/submarine-database 3306:3306 &
           kubectl port-forward svc/submarine-server 8080:8080 &
