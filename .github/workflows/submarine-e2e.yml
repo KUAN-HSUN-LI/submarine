@@ -158,8 +158,7 @@ jobs:
           maven-version: 3.6.3
       - name: Create the kind config
         run: |
-          mkdir .kube
-          cat <<EOF > ./.kube/kind-config-kind.yaml
+          cat <<EOF > ./kubekind-config-kind.yaml
           kind: Cluster
           apiVersion: kind.x-k8s.io/v1alpha4
           nodes:
@@ -183,7 +182,7 @@ jobs:
         with:
           version: "v0.9.0"
           node_image: kindest/node:v1.15.11
-          config: ./.kube/kind-config-kind.yaml
+          config: ./kind-config-kind.yaml
       - name: Show K8s cluster information
         run: |
           kubectl cluster-info
