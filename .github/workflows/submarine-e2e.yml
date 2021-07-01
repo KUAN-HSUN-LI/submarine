@@ -165,7 +165,8 @@ jobs:
           TEST_MODULES: "!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s"
           TEST_PROJECTS: ""
         run: |
-          mvn ${TEST_FLAG} ${TEST_MODULES} ${PROFILE} -B
+          echo ">>> mvn ${TEST_FLAG} ${TEST_MODULES} ${PROFILE} -B"
+          mvn verify -DskipRat -am -Durl=http://127.0.0.1 -pl !:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-client,:submarine-test-k8s -Phadoop-2.9 -B
       - name: Failure status
         run: |
           kubectl get pods
