@@ -154,7 +154,7 @@ jobs:
         run: |
           .github/scripts/build-image-locally.sh
       - name: Start submarine
-        run: ./.github/scripts/start-submarine.sh
+        run: bash ./.github/scripts/start-submarine.sh
       - name: Test
         env:
           TEST_FLAG: "verify -DskipRat -ntp -am -Durl=http://127.0.0.1"
