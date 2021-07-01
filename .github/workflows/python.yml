@@ -109,4 +109,5 @@ jobs:
         run: |
           kubectl get pods
           kubectl -n default get events --sort-by='{.lastTimestamp}'
+          kubectl describe nodes
         if: ${{ failure() }}

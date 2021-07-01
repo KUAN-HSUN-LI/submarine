@@ -172,4 +172,6 @@ jobs:
         run: |
           kubectl get pods
           kubectl -n default get events --sort-by='{.lastTimestamp}'
-        if: ${{ failure() }}
+          echo "Free space:"
+          df -h
+          kubectl describe nodes
