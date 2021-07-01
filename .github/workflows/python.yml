@@ -12,8 +12,6 @@ jobs:
         python-version: [3.6, 3.7]
         tf-version: [1.14.0, 1.15.0]
       fail-fast: false
-    env:
-      PYTHON: ${{ matrix.python }}
     steps:
       - name: Checkout project
         uses: actions/checkout@v1
@@ -48,38 +46,17 @@ jobs:
         uses: stCarolas/setup-maven@v4
         with:
           maven-version: 3.6.3
-      - name: Check version
-        run: |
-          mvn --version
-          java -version
-
-      - name: Create the kind config
-        run: |
-          cat <<EOF > ./kind-config-kind.yaml
-          kind: Cluster
-          apiVersion: kind.x-k8s.io/v1alpha4
-          nodes:
-          - role: control-plane
-            kubeadmConfigPatches:
-            - |
-              kind: InitConfiguration
-              nodeRegistration:
-                kubeletExtraArgs:
-                  node-labels: "ingress-ready=true"
-                  authorization-mode: "AlwaysAllow"
-            extraPortMappings:
-            - containerPort: 32080
-              hostPort: 80
-              protocol: TCP
-            - containerPort: 443
-              hostPort: 443
-              protocol: TCP
-          EOF
       - uses: container-tools/kind-action@v1
         with:
           version: "v0.9.0"
           node_image: kindest/node:v1.15.11
-          config: ./kind-config-kind.yaml
+          config: ./dev-support/github-actions/kind-config-kind.yaml
+      - name: Check version
+        run: |
+          mvn --version
+          java -version
+          kind version
+          helm version
       - name: Show K8s cluster information
         run: |
           kubectl cluster-info
@@ -95,39 +72,15 @@ jobs:
         continue-on-error: true
 
       # Cache maven (for submarine server)
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
-          path: ~/.m2/repository/com
-          key: ${{ runner.os }}-maven-com-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-com-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/org
-          key: ${{ runner.os }}-maven-org-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-org-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/net
-          key: ${{ runner.os }}-maven-net-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-net-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository/io
-          key: ${{ runner.os }}-maven-io-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-io-
+            ${{ runner.os }}-maven-
       - name: Build Image locally
         run: |
           .github/scripts/build-image-locally.sh
-      - uses: azure/setup-helm@v1
-        with:
-          version: 3.6.0
-      - name: Check version
-        run: |
-          helm version
       - name: Start submarine
         run: |
           # Fix submarine-database start failed in kind. https://github.com/kubernetes/minikube/issues/7906
