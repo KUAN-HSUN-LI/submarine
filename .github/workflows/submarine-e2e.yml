@@ -168,3 +168,8 @@ jobs:
           TEST_PROJECTS: ""
         run: |
           mvn ${TEST_FLAG} ${TEST_MODULES} ${PROFILE} -B
+      - name: Failure status
+        run: |
+          kubectl get pods
+          kubectl -n default get events --sort-by='{.lastTimestamp}'
+        if: ${{ failure() }}

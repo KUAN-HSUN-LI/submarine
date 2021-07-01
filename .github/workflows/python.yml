@@ -105,3 +105,8 @@ jobs:
         run: |
           cd submarine-sdk/pysubmarine
           pytest --cov=submarine -vs -m "e2e"
+      - name: Failure status
+        run: |
+          kubectl get pods
+          kubectl -n default get events --sort-by='{.lastTimestamp}'
+        if: ${{ failure() }}
