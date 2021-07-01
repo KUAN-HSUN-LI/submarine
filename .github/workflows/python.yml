@@ -48,7 +48,7 @@ jobs:
           maven-version: 3.6.3
       - uses: container-tools/kind-action@v1
         with:
-          version: "v0.9.0"
+          version: "v0.7.0"
           node_image: kindest/node:v1.15.11
           config: ./dev-support/github-actions/kind-config-kind.yaml
       - name: Check version

@@ -115,11 +115,9 @@ jobs:
         uses: stCarolas/setup-maven@v4
         with:
           maven-version: 3.6.3
-      - uses: container-tools/kind-action@v1
-        with:
-          version: "v0.9.0"
-          node_image: kindest/node:v1.15.11
-          config: ./dev-support/github-actions/kind-config-kind.yaml
+      - name: Create kind cluster
+        run: |
+          kind create cluster --config ./dev-support/github-actions/kind-config-kind.yaml --wait 3m
       - name: Check version
         run: |
           mvn --version
