@@ -362,15 +362,15 @@ public abstract class ClusterManager {
     boolean result = putClusterMeta(metaEntity);
     int i = 0;
     while (!putClusterMeta(metaEntity)) {
-        ++i;
-        if (i > 10){
-            break;
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+      ++i;
+      if (i > 10){
+          break;
+      }
+      try {
+          Thread.sleep(1000);
+      } catch (InterruptedException e) {
+          e.printStackTrace();
+      }
     }
 //    if (false == result) {
 //      LOG.warn(this.getClass().toString() + "::putClusterMeta failure, Cache metadata to queue.");
