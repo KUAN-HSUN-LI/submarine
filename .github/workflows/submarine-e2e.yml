@@ -29,11 +29,11 @@ jobs:
       - name: Build
         env:
           MODULES: >
-            "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
+            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
             !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
             !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
@@ -78,11 +78,11 @@ jobs:
       - name: Build
         env:
           MODULES: >
-            "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
+            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
             !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
             !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
@@ -115,11 +115,11 @@ jobs:
       - name: Build
         env:
           MODULES: >
-            "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
+            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
             !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
             !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,!:submarine-client,
             !:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-all,
-            !:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+            !:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
@@ -152,11 +152,11 @@ jobs:
       - name: Build
         env:
           MODULES: >
-            "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
+            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
             !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
             !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
@@ -189,11 +189,11 @@ jobs:
       - name: Build
         env:
           MODULES: >
-            "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
+            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
             !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
             !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
           echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
           mvn $BUILD_FLAG $MODULES $PROFILE -B
@@ -250,8 +250,8 @@ jobs:
         env:
           TEST_FLAG: "test -DskipRat -am"
           TEST_MODULES: >
-            "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-utils,org.apache.submarine:submarine-server-core"
+            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
+            !:submarine-commons-utils,org.apache.submarine:submarine-server-core
           PROFILE: "-Phadoop-2.9"
           TEST_PROJECTS: ""
         run: |
