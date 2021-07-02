@@ -240,6 +240,11 @@ jobs:
         run: |
           echo ">>> mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B"
           mvn test -DskipRat -am -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils,org.apache.submarine:submarine-server-core -Phadoop-2.9 -B
+      - name: Delete temporary build artifacts before caching
+        run: |
+          #Never cache local artifacts
+          rm -rf ~/.m2/repository/org/apache/submarine/
+        if: always()
   submarine-workbench:
     runs-on: ubuntu-latest
     steps:
