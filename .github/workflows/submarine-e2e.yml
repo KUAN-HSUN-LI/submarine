@@ -35,8 +35,8 @@ jobs:
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
             !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
-          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-          mvn $BUILD_FLAG $MODULES $PROFILE -B
+          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
+          mvn clean install -DskipTests $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -84,8 +84,8 @@ jobs:
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
             !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
-          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-          mvn $BUILD_FLAG $MODULES $PROFILE -B
+          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
+          mvn clean install -DskipTests $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -121,8 +121,8 @@ jobs:
             !:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-all,
             !:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
-          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-          mvn $BUILD_FLAG $MODULES $PROFILE -B
+          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
+          mvn clean install -DskipTests $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -158,8 +158,8 @@ jobs:
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
             !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
-          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-          mvn $BUILD_FLAG $MODULES $PROFILE -B
+          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
+          mvn clean install -DskipTests $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -195,8 +195,8 @@ jobs:
             !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
             !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
         run: |
-          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
-          mvn $BUILD_FLAG $MODULES $PROFILE -B
+          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
+          mvn clean install -DskipTests $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -276,8 +276,6 @@ jobs:
           mvn --version
           node --version
           npm --version
-          chromedriver version
-          firefox -v
       - name: Maven Build
         env:
           BUILD_FLAG: "clean package -DskipTests -ntp"
