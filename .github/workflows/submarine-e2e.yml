@@ -5,7 +5,17 @@ on: [push]
 env:
   VERSION: "0.6.0-SNAPSHOT"
   HADOOP_VERSION: "2.9"
+  EXCLUDE_SERVER: "!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc"
+  EXCLUDE_CLIENT: "!:submarine-client"
+  EXCLUDE_ALL: "!:submarine-all"
+  EXCLUDE_WORKBENCH: "!:submarine-workbench,!:submarine-workbench-web"
+  EXCLUDE_SUBMITTER: "!:submarine-server-submitter,!:submarine-submitter-k8s,!:submarine-submitter-yarn"
+  EXCLUDE_COMMONS: "!:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-runtime,!:submarine-commons-utils"
+  EXCLUDE_CLOUD: "!:submarine-cloud"
+  EXCLUDE_DIST: "!:submarine-dist"
+  EXCLUDE_TEST: "!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
   PROFILE: "-Phadoop-2.9"
+  BUILD_FLAG: "clean install -DskipTests"
 
 jobs:
   Submarine-commons-cluster:
@@ -28,15 +38,10 @@ jobs:
           java -version
       - name: Build
         env:
-          MODULES: >
-            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
-            !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
-            !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
-          mvn clean install -DskipTests $MODULES $PROFILE -B
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -77,15 +82,10 @@ jobs:
           python3 ./dev-support/database/init-database.py
       - name: Build
         env:
-          MODULES: >
-            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
-            !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
-            !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
-          mvn clean install -DskipTests $MODULES $PROFILE -B
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -114,15 +114,10 @@ jobs:
           java -version
       - name: Build
         env:
-          MODULES: >
-            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
-            !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,!:submarine-client,
-            !:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,!:submarine-all,
-            !:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
-          mvn clean install -DskipTests $MODULES $PROFILE -B
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -151,15 +146,10 @@ jobs:
           java -version
       - name: Build
         env:
-          MODULES: >
-            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
-            !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
-            !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
-          mvn clean install -DskipTests $MODULES $PROFILE -B
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -188,15 +178,10 @@ jobs:
           java -version
       - name: Build
         env:
-          MODULES: >
-            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-runtime,!:submarine-commons-utils,!:submarine-server-submitter,
-            !:submarine-submitter-k8s,!:submarine-submitter-yarn,!:submarine-workbench,!:submarine-workbench-web,
-            !:submarine-client,!:submarine-cloud,!:submarine-server-api,!:submarine-server-core,!:submarine-server-rpc,
-            !:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s
+          MODULES: "-pl ${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_SUBMITTER}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLIENT}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
         run: |
-          echo ">>> mvn clean install -DskipTests $MODULES $PROFILE -B"
-          mvn clean install -DskipTests $MODULES $PROFILE -B
+          echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
+          mvn $BUILD_FLAG $MODULES $PROFILE -B
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -ntp -am"
@@ -249,9 +234,7 @@ jobs:
       - name: Test
         env:
           TEST_FLAG: "test -DskipRat -am"
-          TEST_MODULES: >
-            -pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,
-            !:submarine-commons-utils,org.apache.submarine:submarine-server-core
+          TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
           PROFILE: "-Phadoop-2.9"
           TEST_PROJECTS: ""
         run: |
