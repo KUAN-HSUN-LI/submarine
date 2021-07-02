@@ -364,12 +364,12 @@ public abstract class ClusterManager {
     while (!putClusterMeta(metaEntity)) {
       ++i;
       if (i > 10){
-          break;
+        break;
       }
       try {
-          Thread.sleep(1000);
+        Thread.sleep(1000);
       } catch (InterruptedException e) {
-          e.printStackTrace();
+        e.printStackTrace();
       }
     }
 //    if (false == result) {
