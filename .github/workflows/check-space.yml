@@ -1,0 +1,16 @@
+name: check-space
+
+on: [push]
+
+env:
+  VERSION: "0.6.0-SNAPSHOT"
+  HADOOP_VERSION: "2.9"
+  PROFILE: "-Phadoop-2.9"
+
+jobs:
+  submarine-k8s:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check space
+      run: |
+        df -h
