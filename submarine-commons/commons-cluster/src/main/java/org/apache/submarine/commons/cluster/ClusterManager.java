@@ -63,6 +63,7 @@ import io.atomix.protocols.raft.protocol.AppendResponse;
 import io.atomix.protocols.raft.protocol.PublishRequest;
 import io.atomix.protocols.raft.protocol.ResetRequest;
 import io.atomix.protocols.raft.protocol.RaftResponse;
+import io.atomix.protocols.raft.session.RaftSessionClient;
 import io.atomix.protocols.raft.storage.log.entry.CloseSessionEntry;
 import io.atomix.protocols.raft.storage.log.entry.CommandEntry;
 import io.atomix.protocols.raft.storage.log.entry.ConfigurationEntry;
@@ -105,12 +106,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import static io.atomix.primitive.operation.PrimitiveOperation.operation;
 import static org.apache.submarine.commons.cluster.meta.ClusterMetaOperation.DELETE_OPERATION;
@@ -194,13 +191,17 @@ public abstract class ClusterManager {
 
   private SessionClient createProxy(RaftClient client) {
     LOG.info("creating proxy");
-    return client.sessionBuilder(ClusterPrimitiveType.PRIMITIVE_NAME,
-        ClusterPrimitiveType.INSTANCE, new ServiceConfig())
-        .withReadConsistency(ReadConsistency.SEQUENTIAL)
-        .withCommunicationStrategy(CommunicationStrategy.LEADER)
-        .build()
-        .connect()
-        .join();
+    RaftSessionClient.Builder s = client.sessionBuilder(ClusterPrimitiveType.PRIMITIVE_NAME,
+            ClusterPrimitiveType.INSTANCE, new ServiceConfig());
+    LOG.info("s success");
+    RaftSessionClient.Builder s0 = s.withReadConsistency(ReadConsistency.SEQUENTIAL);
+    LOG.info("s0 success");
+    SessionClient s00 = s0.withCommunicationStrategy(CommunicationStrategy.LEADER).build();
+    LOG.info("build success: {}", s00);
+    CompletableFuture<SessionClient> s2 = s00.connect();
+    LOG.info("connect success: {}", s2);
+    SessionClient s3 = s2.join();
+    return s3;
   }
 
   public void start() {
