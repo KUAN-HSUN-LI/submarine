@@ -360,22 +360,10 @@ public abstract class ClusterManager {
     ClusterMetaEntity metaEntity = new ClusterMetaEntity(PUT_OPERATION, type, key, values);
 
     boolean result = putClusterMeta(metaEntity);
-    int i = 0;
-    while (!putClusterMeta(metaEntity)) {
-      ++i;
-      if (i > 10){
-        break;
-      }
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+    if (false == result) {
+      LOG.warn(this.getClass().toString() + "::putClusterMeta failure, Cache metadata to queue.");
+      clusterMetaQueue.add(metaEntity);
     }
-//    if (false == result) {
-//      LOG.warn(this.getClass().toString() + "::putClusterMeta failure, Cache metadata to queue.");
-//      clusterMetaQueue.add(metaEntity);
-//    }
   }
 
   // delete metadata by cluster metadata

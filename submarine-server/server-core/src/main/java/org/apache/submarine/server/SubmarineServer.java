@@ -113,10 +113,10 @@ public class SubmarineServer extends ResourceConfig {
         });
 
     setupRestApiContextHandler(webApp, conf);
-
+    LOG.info("Notebook setup");
     // Notebook server
     setupNotebookServer(webApp, conf, sharedServiceLocator);
-
+    LOG.info("Cluster setup");
     // Cluster Server
     // Cluster Server is useless for submarine now. Shield it to improve performance.
     // setupClusterServer();
