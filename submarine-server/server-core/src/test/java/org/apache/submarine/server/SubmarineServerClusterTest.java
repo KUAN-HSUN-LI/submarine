@@ -84,13 +84,13 @@ public class SubmarineServerClusterTest extends AbstractSubmarineServerTest {
         break;
       }
 
-      sleep(3000);
+      sleep(30000);
     }
 
     assertTrue("Can not start Submarine server!", clusterClient.raftInitialized());
 
     // Waiting for the submarine server to register in the cluster and client send heartbeat to cluster
-    sleep(10000);
+    sleep(100000);
   }
 
   @AfterClass
