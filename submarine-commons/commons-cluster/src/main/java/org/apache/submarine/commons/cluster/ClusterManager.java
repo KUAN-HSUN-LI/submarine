@@ -202,9 +202,9 @@ public abstract class ClusterManager {
     RaftSessionClient.Builder s0 = s.withReadConsistency(ReadConsistency.SEQUENTIAL);
     LOG.info("s0 success");
     SessionClient s00 = s0.withCommunicationStrategy(CommunicationStrategy.LEADER).build();
-    LOG.info("build success: {}", s00);
+    LOG.info("build success");
     CompletableFuture<SessionClient> s2 = s00.connect();
-    LOG.info("connect success: {}", s2);
+    LOG.info("connect success", s2);
     SessionClient s3 = s2.join();
     return s3;
   }
