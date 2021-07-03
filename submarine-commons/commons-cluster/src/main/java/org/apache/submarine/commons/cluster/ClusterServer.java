@@ -79,11 +79,14 @@ public class ClusterServer extends ClusterManager {
   // Do not use the getInstance function in the test case,
   // which will result in an inability to update the instance according to the configuration.
   public static ClusterServer getInstance() {
+    LOG.info("instance: {}", instance);
     synchronized (ClusterServer.class) {
+      LOG.info("instance: {}", instance);
       if (instance == null) {
         instance = new ClusterServer();
       }
     }
+    LOG.info("instance: {}", instance);
     return instance;
   }
 
