@@ -204,8 +204,9 @@ public abstract class ClusterManager {
     SessionClient s00 = s0.withCommunicationStrategy(CommunicationStrategy.LEADER).build();
     LOG.info("build success");
     CompletableFuture<SessionClient> s2 = s00.connect();
-    LOG.info("connect success", s2);
+    LOG.info("connect success");
     SessionClient s3 = s2.join();
+    LOG.info("join success");
     return s3;
   }
 
