@@ -231,17 +231,17 @@ public abstract class ClusterManager {
             MESSAGING_SERVICE_NAME, address, new MessagingConfig()).start().join();
         RaftClientProtocol protocol = new RaftClientMessagingProtocol(
             messagingManager, protocolSerializer, raftAddressMap::get);
-
+        LOG.info("RaftClientProtocol: {}", protocol);
         raftClient = RaftClient.builder()
             .withMemberId(memberId)
             .withPartitionId(PartitionId.from("partition", 1))
             .withProtocol(protocol)
             .build();
-
+        LOG.info("raftClient get {}", raftClient);
         raftClient.connect(clusterMemberIds).join();
 
         raftSessionClient = createProxy(raftClient);
-
+        LOG.info("raftSessionClient get {}", raftSessionClient);
         LOG.info("RaftClientThread run() <<<");
       }
     }).start();
