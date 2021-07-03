@@ -239,6 +239,7 @@ public abstract class ClusterManager {
             .withProtocol(protocol)
             .build();
         LOG.info("raftClient get {}", raftClient);
+        LOG.info("clusterMemberIds: {}", clusterMemberIds);
         raftClient.connect(clusterMemberIds).join();
         LOG.info("raftClient join {}", raftClient);
         raftSessionClient = createProxy(raftClient);
@@ -262,7 +263,7 @@ public abstract class ClusterManager {
                 if (0 == retry % 30) {
                   LOG.warn("Raft incomplete initialization! retry[{}]", retry);
                 }
-                Thread.sleep(1000);
+                Thread.sleep(100);
               }
               boolean success = false;
               switch (metaEntity.getOperation()) {
@@ -281,7 +282,7 @@ public abstract class ClusterManager {
                 LOG.error("Cluster Meta Consume failed!");
               }
             } else {
-              Thread.sleep(1000);
+              Thread.sleep(100);
             }
           }
         } catch (InterruptedException e) {
