@@ -193,6 +193,7 @@ public abstract class ClusterManager {
   }
 
   private SessionClient createProxy(RaftClient client) {
+    LOG.info("creating proxy");
     return client.sessionBuilder(ClusterPrimitiveType.PRIMITIVE_NAME,
         ClusterPrimitiveType.INSTANCE, new ServiceConfig())
         .withReadConsistency(ReadConsistency.SEQUENTIAL)
@@ -239,7 +240,7 @@ public abstract class ClusterManager {
             .build();
         LOG.info("raftClient get {}", raftClient);
         raftClient.connect(clusterMemberIds).join();
-
+        LOG.info("raftClient join {}", raftClient);
         raftSessionClient = createProxy(raftClient);
         LOG.info("raftSessionClient get {}", raftSessionClient);
         LOG.info("RaftClientThread run() <<<");
