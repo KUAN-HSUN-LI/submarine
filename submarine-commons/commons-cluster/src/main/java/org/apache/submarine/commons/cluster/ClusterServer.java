@@ -86,7 +86,10 @@ public class ClusterServer extends ClusterManager {
         instance = new ClusterServer();
       }
     }
-    LOG.info("instance: {}", instance);
+    if (instance != null) {
+      LOG.info("instance: {}", instance);
+      LOG.info("instance: {}", instance.clusterMemberIds);
+    }
     return instance;
   }
 
