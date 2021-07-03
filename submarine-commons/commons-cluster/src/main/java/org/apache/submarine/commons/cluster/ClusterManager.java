@@ -262,7 +262,7 @@ public abstract class ClusterManager {
                 if (0 == retry % 30) {
                   LOG.warn("Raft incomplete initialization! retry[{}]", retry);
                 }
-                Thread.sleep(100);
+                Thread.sleep(1000);
               }
               boolean success = false;
               switch (metaEntity.getOperation()) {
@@ -281,7 +281,7 @@ public abstract class ClusterManager {
                 LOG.error("Cluster Meta Consume failed!");
               }
             } else {
-              Thread.sleep(100);
+              Thread.sleep(1000);
             }
           }
         } catch (InterruptedException e) {
