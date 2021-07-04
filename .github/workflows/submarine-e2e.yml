@@ -15,7 +15,7 @@ env:
   EXCLUDE_DIST: "!:submarine-dist"
   EXCLUDE_TEST: "!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
   PROFILE: "-Phadoop-2.9"
-  BUILD_FLAG: "clean install -DskipTests"
+  BUILD_FLAG: "clean install -ntp -DskipTests"
 
 jobs:
   Submarine-commons-cluster:

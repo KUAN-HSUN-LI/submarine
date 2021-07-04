@@ -21,6 +21,7 @@ import org.apache.submarine.commons.utils.SubmarineConfiguration;
 import org.apache.submarine.commons.utils.NetworkUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +170,7 @@ public class ClusterMultiNodeTest {
     assertEquals(hashMap.size(), 3);
     LOG.info("ClusterMultiNodeTest::testClusterServerMeta <<<");
   }
-  
+
   @Ignore
   @Test
   public void testClusterClientMeta() {
