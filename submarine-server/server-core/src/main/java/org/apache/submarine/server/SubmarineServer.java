@@ -118,9 +118,14 @@ public class SubmarineServer extends ResourceConfig {
     setupNotebookServer(webApp, conf, sharedServiceLocator);
     LOG.info("Cluster setup");
     // Cluster Server
+<<<<<<< HEAD
     // Cluster Server is useless for submarine now. Shield it to improve performance.
     // setupClusterServer();
 
+=======
+    // setupClusterServer();
+    LOG.info("Server rpc");
+>>>>>>> shield submarine cluster
     rpcServer = SubmarineRpcServer.startRpcServer();
     startServer();
   }
