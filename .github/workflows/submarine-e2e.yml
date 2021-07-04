@@ -225,13 +225,13 @@ jobs:
         python3 ./dev-support/database/init-database.py
     - name: Build
       env:
-        MODULES: "-pl !:submarine-submitter-k8s,!:submarine-workbench,!:submarine-workbench-web,!:submarine-cloud,!:submarine-all,!:submarine-dist,!:submarine-test,!:submarine-test-e2e,!:submarine-test-k8s"
+        MODULES: "${{env.EXCLUDE_SUBMITTER_K8S}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
       run: |
         echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
         mvn $BUILD_FLAG $MODULES $PROFILE -B
     - name: Test
       env:
-        TEST_MODULES: "-pl !:submarine-commons-cluster,!:submarine-commons-metastore,!:submarine-commons-rpc,!:submarine-commons-utils,org.apache.submarine:submarine-server-core"
+        TEST_MODULES: "-pl ${{env.EXCLUDE_COMMONS}},org.apache.submarine:submarine-server-core"
       run: |
         echo ">>> mvn $TEST_FLAG $TEST_MODULES $PROFILE -B"
         mvn $TEST_FLAG $TEST_MODULES $PROFILE -B
@@ -303,7 +303,7 @@ jobs:
         mvn $BUILD_FLAG $MODULES $PROFILE -B
     - name: Test
       env:
-        TEST_MODULES: -pl ${env.EXCLUDE_SUBMITTER_K8S},${env.EXCLUDE_WORKBENCH},${env.EXCLUDE_CLOUD},${env.EXCLUDE_COMMONS},${env.EXCLUDE_DIST},${env.EXCLUDE_TEST},${env.EXCLUDE_ALL},${env.EXCLUDE_SERVER},${env.EXCLUDE_SPARK_SECURTITY}
+        TEST_MODULES: -pl ${{env.EXCLUDE_SUBMITTER_K8S}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_COMMONS}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_SERVER}},${{env.EXCLUDE_SPARK_SECURTITY}}
         PROFILE: "-Phadoop-${{ matrix.hadoop-version }}"
       run: |
         echo ">>> mvn $TEST_FLAG $TEST_MODULES $PROFILE -B"
