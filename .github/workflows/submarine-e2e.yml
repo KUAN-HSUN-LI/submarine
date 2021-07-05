@@ -225,7 +225,7 @@ jobs:
         python3 ./dev-support/database/init-database.py
     - name: Build
       env:
-        MODULES: "$-pl ${{env.EXCLUDE_SUBMITTER_K8S}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
+        MODULES: "-pl ${{env.EXCLUDE_SUBMITTER_K8S}},${{env.EXCLUDE_WORKBENCH}},${{env.EXCLUDE_CLOUD}},${{env.EXCLUDE_ALL}},${{env.EXCLUDE_DIST}},${{env.EXCLUDE_TEST}}"
       run: |
         echo ">>> mvn $BUILD_FLAG $MODULES $PROFILE -B"
         mvn $BUILD_FLAG $MODULES $PROFILE -B
